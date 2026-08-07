@@ -2,8 +2,7 @@
 
 ## Proje Hakkında
 
-Taskflow, Spring Boot kullanılarak geliştirilen görev yönetim uygulamasıdır.
-
+TaskFlow, ekiplerin projelerini ve görevlerini yönettiği bir REST API’dir.
 # Kullanılan Teknolojiler
 
 - Java
