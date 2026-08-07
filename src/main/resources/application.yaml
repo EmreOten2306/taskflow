@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: taskflow
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/taskflow}
+    username: ${SPRING_DATASOURCE_USERNAME:taskflow}
+    password: ${SPRING_DATASOURCE_PASSWORD:taskflow}
+  jpa:
+    hibernate:
+      ddl-auto: update        # şemayı entity'lerden Hibernate üretiyor
+    open-in-view: false       # neden false olduğunu araştır, demoda sorulacak
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG                                  # üretilen SQL'i gör
+    org.hibernate.orm.jdbc.bind: TRACE                        # parametreleri gör
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+server:
+  port: 8080
