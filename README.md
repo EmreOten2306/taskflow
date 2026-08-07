@@ -20,7 +20,8 @@ Projeyi çalıştırmadan önce aşağıdaki araçların kurulu olması gerekir:
 - Docker Compose
 - Git
 
-## Çalıştırma
+
+## Çalıştırma!
 
 ### 1. Projeyi klonlama
 
