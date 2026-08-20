@@ -1,9 +1,12 @@
-# Taskflow
+# TaskFlow
 
-## Proje Hakkında
+## About The Project
 
-TaskFlow, ekiplerin projelerini ve görevlerini yönettiği bir REST API’dir.
-# Kullanılan Teknolojiler
+TaskFlow is a REST API application that helps teams manage their projects and tasks efficiently.
+
+The application provides a backend structure for creating, managing, and organizing projects and tasks with a scalable architecture.
+
+## Technologies Used
 
 - Java
 - Spring Boot
@@ -11,9 +14,9 @@ TaskFlow, ekiplerin projelerini ve görevlerini yönettiği bir REST API’dir.
 - PostgreSQL
 - Docker
 
-## Ön Koşullar
+## Prerequisites
 
-Projeyi çalıştırmadan önce aşağıdaki araçların kurulu olması gerekir:
+Before running the project, make sure the following tools are installed on your machine:
 
 - Java 17+
 - Docker
@@ -23,7 +26,9 @@ Projeyi çalıştırmadan önce aşağıdaki araçların kurulu olması gerekir:
 
 ## Çalıştırma!
 
-### 1. Projeyi klonlama
+## Running the Project
+
+### 1. Clone the Repository
 
 ```bash
 git clone <repository-url>
