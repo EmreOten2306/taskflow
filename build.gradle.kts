@@ -37,6 +37,10 @@ dependencies {
 	// --- Geliştirme kolaylığı ---
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 
+	// --- Lombok ---
+	compileOnly("org.projectlombok:lombok")
+	annotationProcessor("org.projectlombok:lombok")
+
 	// --- Test ---
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")

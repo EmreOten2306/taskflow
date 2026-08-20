@@ -4,8 +4,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import lombok.Getter;
+import lombok.Setter;
 import tech.ekya.taskflow.common.BaseEntity;
 
+@Setter
+@Getter
 @Entity
 public class AppUser extends BaseEntity {
     private String fullName;
@@ -16,7 +20,7 @@ public class AppUser extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public AppUser(){
+    public AppUser (){
 
     }
 

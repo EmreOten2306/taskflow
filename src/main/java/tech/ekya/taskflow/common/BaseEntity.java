@@ -6,8 +6,9 @@ import java.time.LocalDateTime;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import lombok.Getter;
 
-
+@Getter
 @MappedSuperclass
 public class BaseEntity {
 
