@@ -24,6 +24,8 @@ Before running the project, make sure the following tools are installed on your 
 - Git
 
 
+## Çalıştırma!
+
 ## Running the Project
 
 ### 1. Clone the Repository
