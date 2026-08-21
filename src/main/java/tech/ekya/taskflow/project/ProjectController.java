@@ -1,4 +1,5 @@
 package tech.ekya.taskflow.project;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import tech.ekya.taskflow.project.dto.CreateProjectRequest;
@@ -21,7 +22,7 @@ public class ProjectController {
 
 
     @PostMapping
-    public ProjectResponse createProject(@RequestBody CreateProjectRequest request){
+    public ProjectResponse createProject(@Valid @RequestBody CreateProjectRequest request){
         Project project = projectMapper.toEntity(request);
         Project savedProject = projectService.createProject(project);
         return projectMapper.toResponse(savedProject);
@@ -48,7 +49,7 @@ public class ProjectController {
 
 
     @PutMapping ("/{id}")
-    public ProjectResponse updateProject(@PathVariable Long id , @RequestBody UpdateProjectRequest request){
+    public ProjectResponse updateProject(@PathVariable Long id , @Valid @RequestBody UpdateProjectRequest request){
         Project existingProject = projectService.updateProject(id,request);
             return projectMapper.toResponse(existingProject);
     }
@@ -63,7 +64,7 @@ public class ProjectController {
 
     @PatchMapping("/{id}/status")
             public ProjectResponse patchProject(@PathVariable Long id,
-                                        @RequestBody  ProjectStatus status){
+                                         @RequestBody  ProjectStatus status){
        return projectMapper.toResponse(projectService.updateProjectStatus(id,status));
 
     }
