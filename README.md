@@ -18,7 +18,7 @@ The application provides a backend structure for creating, managing, and organiz
 
 Before running the project, make sure the following tools are installed on your machine:
 
-- Java 17+
+- Java 21(Temurin)
 - Docker
 - Docker Compose
 - Git
