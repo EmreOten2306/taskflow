@@ -3,6 +3,7 @@ package tech.ekya.taskflow.project;
 import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
+import tech.ekya.taskflow.project.dto.UpdateProjectRequest;
 import tech.ekya.taskflow.user.AppUserRepository;
 
 import java.util.List;
@@ -14,12 +15,12 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final AppUserRepository appUserRepository;
+    private final ProjectMapper projectMapper;
 
-    public ProjectService(ProjectRepository projectRepository, AppUserRepository appUserRepository) {
+    public ProjectService(ProjectRepository projectRepository, AppUserRepository appUserRepository,ProjectMapper projectMapper) {
         this.projectRepository = projectRepository;
         this.appUserRepository = appUserRepository;
-
-
+        this.projectMapper = projectMapper;
     }
 
     /// CREATE
@@ -65,7 +66,6 @@ public class ProjectService {
                 .orElseThrow();
     }
 
-
     /// UPDATE PROJECT STATUS
 
     public Project updateProjectStatus(Long id , ProjectStatus status){
@@ -76,15 +76,12 @@ public class ProjectService {
     }
 
     /// UPDATE
-    public Project updateProject(Long id, Project project) {
+    public Project updateProject(Long id, UpdateProjectRequest request) {
 
         Project existingProject = projectRepository.findById(id)
                 .orElseThrow();
-        existingProject.setCode(project.getCode());
-        existingProject.setOwner(project.getOwner());
-        existingProject.setDescription(project.getDescription());
-        existingProject.setName(project.getName());
-        existingProject.setStatus(project.getStatus());
+
+        projectMapper.updateEntity(request, existingProject);
 
         return projectRepository.save(existingProject);
     }
