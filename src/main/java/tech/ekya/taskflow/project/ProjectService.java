@@ -24,6 +24,8 @@ public class ProjectService {
 
     /// CREATE
     public Project createProject(Project project) {
+        var owner = appUserRepository.findById(1L).orElseThrow();
+        project.setOwner(owner);
         return projectRepository.save(project);
     }
 
