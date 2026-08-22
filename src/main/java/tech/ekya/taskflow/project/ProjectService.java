@@ -3,6 +3,8 @@ package tech.ekya.taskflow.project;
 import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
+import tech.ekya.taskflow.exception.DuplicateResourceException;
+import tech.ekya.taskflow.exception.ResourceNotFoundException;
 import tech.ekya.taskflow.project.dto.UpdateProjectRequest;
 import tech.ekya.taskflow.user.AppUserRepository;
 
@@ -25,8 +27,15 @@ public class ProjectService {
 
     /// CREATE
     public Project createProject(Project project) {
+        if (projectRepository.existsByCode(project.getCode())) {
+            throw new DuplicateResourceException(
+                    "Project code already exists: " + project.getCode()
+            );
+        }
+
         var owner = appUserRepository.findById(1L).orElseThrow();
         project.setOwner(owner);
+
         return projectRepository.save(project);
     }
 
@@ -63,8 +72,9 @@ public class ProjectService {
     /// READ BY ID
     public Project getProjectById(Long id) {
         return projectRepository.findById(id)
-                .orElseThrow();
-    }
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Project not found with id: " + id
+                ));    }
 
     /// UPDATE PROJECT STATUS
 
