@@ -3,6 +3,9 @@ package tech.ekya.taskflow.project;
 import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
+import tech.ekya.taskflow.exception.DuplicateResourceException;
+import tech.ekya.taskflow.exception.ResourceNotFoundException;
+import tech.ekya.taskflow.project.dto.UpdateProjectRequest;
 import tech.ekya.taskflow.user.AppUserRepository;
 
 import java.util.List;
@@ -14,16 +17,25 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final AppUserRepository appUserRepository;
+    private final ProjectMapper projectMapper;
 
-    public ProjectService(ProjectRepository projectRepository, AppUserRepository appUserRepository) {
+    public ProjectService(ProjectRepository projectRepository, AppUserRepository appUserRepository,ProjectMapper projectMapper) {
         this.projectRepository = projectRepository;
         this.appUserRepository = appUserRepository;
-
-
+        this.projectMapper = projectMapper;
     }
 
     /// CREATE
     public Project createProject(Project project) {
+        if (projectRepository.existsByCode(project.getCode())) {
+            throw new DuplicateResourceException(
+                    "Project code already exists: " + project.getCode()
+            );
+        }
+
+        var owner = appUserRepository.findById(1L).orElseThrow();
+        project.setOwner(owner);
+
         var owner = appUserRepository.findById(1L).orElseThrow();
         project.setOwner(owner);
         return projectRepository.save(project);
@@ -62,9 +74,9 @@ public class ProjectService {
     /// READ BY ID
     public Project getProjectById(Long id) {
         return projectRepository.findById(id)
-                .orElseThrow();
-    }
-
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Project not found with id: " + id
+                ));    }
 
     /// UPDATE PROJECT STATUS
 
@@ -76,15 +88,12 @@ public class ProjectService {
     }
 
     /// UPDATE
-    public Project updateProject(Long id, Project project) {
+    public Project updateProject(Long id, UpdateProjectRequest request) {
 
         Project existingProject = projectRepository.findById(id)
                 .orElseThrow();
-        existingProject.setCode(project.getCode());
-        existingProject.setOwner(project.getOwner());
-        existingProject.setDescription(project.getDescription());
-        existingProject.setName(project.getName());
-        existingProject.setStatus(project.getStatus());
+
+        projectMapper.updateEntity(request, existingProject);
 
         return projectRepository.save(existingProject);
     }
