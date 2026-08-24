@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import tech.ekya.taskflow.comment.Comment;
 import tech.ekya.taskflow.common.BaseEntity;
+import tech.ekya.taskflow.label.Label;
 import tech.ekya.taskflow.project.Project;
 import tech.ekya.taskflow.user.AppUser;
 import java.time.LocalDateTime;
@@ -33,4 +34,9 @@ private Project project;
 
 @ManyToOne
 private AppUser assignee;
+
+@ManyToMany
+@JoinTable(name = "task_label")
+private List<Label> labels;
+
 }
