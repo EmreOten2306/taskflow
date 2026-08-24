@@ -7,6 +7,8 @@ import tech.ekya.taskflow.comment.Comment;
 import tech.ekya.taskflow.common.BaseEntity;
 import tech.ekya.taskflow.label.Label;
 import tech.ekya.taskflow.project.Project;
+import tech.ekya.taskflow.task.taskenums.TaskPriority;
+import tech.ekya.taskflow.task.taskenums.TaskStatus;
 import tech.ekya.taskflow.user.AppUser;
 import java.time.LocalDateTime;
 import java.util.List;

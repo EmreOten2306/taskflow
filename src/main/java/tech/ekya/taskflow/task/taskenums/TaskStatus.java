@@ -1,4 +1,4 @@
-package tech.ekya.taskflow.task;
+package tech.ekya.taskflow.task.taskenums;
 
 public enum TaskStatus {
     TODO,
