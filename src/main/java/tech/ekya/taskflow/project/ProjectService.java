@@ -36,8 +36,6 @@ public class ProjectService {
         var owner = appUserRepository.findById(1L).orElseThrow();
         project.setOwner(owner);
 
-        var owner = appUserRepository.findById(1L).orElseThrow();
-        project.setOwner(owner);
         return projectRepository.save(project);
     }
 
