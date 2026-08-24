@@ -80,7 +80,9 @@ public class ProjectService {
 
     public Project updateProjectStatus(Long id , ProjectStatus status){
         Project existingProject=projectRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Project not found with id: " + id
+                ));
         existingProject.setStatus(status);
         return projectRepository.save(existingProject);
     }
@@ -89,7 +91,9 @@ public class ProjectService {
     public Project updateProject(Long id, UpdateProjectRequest request) {
 
         Project existingProject = projectRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Project not found with id: " + id
+                ));
 
         projectMapper.updateEntity(request, existingProject);
 
@@ -97,6 +101,10 @@ public class ProjectService {
     }
     /// DELETE
     public void  deleteProject(Long id){
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Project not found with id: " + id
+                ));
         projectRepository.deleteById(id);
 
 

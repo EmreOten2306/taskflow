@@ -49,7 +49,8 @@ public class ProjectController {
 
 
     @PutMapping ("/{id}")
-    public ProjectResponse updateProject(@PathVariable Long id , @Valid @RequestBody UpdateProjectRequest request){
+    public ProjectResponse updateProject(@PathVariable Long id,
+                                         @Valid @RequestBody UpdateProjectRequest request){
         Project existingProject = projectService.updateProject(id,request);
             return projectMapper.toResponse(existingProject);
     }
