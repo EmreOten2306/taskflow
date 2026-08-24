@@ -1,15 +1,14 @@
 package tech.ekya.taskflow.task;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import tech.ekya.taskflow.comment.Comment;
 import tech.ekya.taskflow.common.BaseEntity;
 import tech.ekya.taskflow.project.Project;
 import tech.ekya.taskflow.user.AppUser;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -25,6 +24,9 @@ private TaskStatus status;
 private TaskPriority priority;
 
 private LocalDateTime dueDate;
+
+@OneToMany(mappedBy = "task" , cascade = CascadeType.ALL)
+private List<Comment> comments;
 
 @ManyToOne(optional = false)
 private Project project;
