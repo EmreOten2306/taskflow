@@ -1,7 +1,7 @@
 package tech.ekya.taskflow.task;
-
-
 import org.springframework.web.bind.annotation.*;
+import tech.ekya.taskflow.task.taskenums.TaskStatus;
+import tech.ekya.taskflow.user.AppUser;
 
 import java.util.List;
 
@@ -28,9 +28,22 @@ public class TaskController {
         return taskService.getTaskById(id);
     }
     @PutMapping("/tasks/{id}")
-    public Task updateTask(@PathVariable Long id,@RequestBody Task task){
+    public Task updateTask(@PathVariable Long id,
+                           @RequestBody Task task){
     return taskService.updateTaskById(id,task);
 
+    }
+
+    @PatchMapping("/tasks/{id}/status")
+    public Task updateTaskStatus(@PathVariable Long id,
+                                       @RequestBody TaskStatus taskStatus){
+        return taskService.updateTaskStatus(id,taskStatus);
+    }
+
+    @PatchMapping("/tasks/{id}/assignee")
+    public Task updateTaskAssignee(@PathVariable Long id,
+                                   @RequestBody Long assigneeId ){
+        return taskService.updateTaskAssignee(id,assigneeId);
     }
 
     @DeleteMapping ("/tasks/{id}")
