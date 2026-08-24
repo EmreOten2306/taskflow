@@ -1,14 +1,13 @@
 package tech.ekya.taskflow.task;
 import org.springframework.web.bind.annotation.*;
 import tech.ekya.taskflow.task.taskenums.TaskStatus;
-import tech.ekya.taskflow.user.AppUser;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
 public class TaskController {
-    private  TaskService taskService;
+    private  final TaskService taskService;
     public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
@@ -18,6 +17,12 @@ public class TaskController {
                            @PathVariable Long projectId){
         return taskService.createTask(projectId, task);
     }
+    @PostMapping("/tasks/{id}/labels/{labelId}")
+    public Task createTaskLabel(@PathVariable Long id,
+                                @PathVariable Long labelId){
+        return taskService.createLabelToTask(id, labelId);
+    }
+
 
     @GetMapping ("/projects/{projectId}/tasks")
     public List<Task> getAllTasks(@PathVariable Long projectId){
@@ -31,7 +36,6 @@ public class TaskController {
     public Task updateTask(@PathVariable Long id,
                            @RequestBody Task task){
     return taskService.updateTaskById(id,task);
-
     }
 
     @PatchMapping("/tasks/{id}/status")
@@ -44,6 +48,10 @@ public class TaskController {
     public Task updateTaskAssignee(@PathVariable Long id,
                                    @RequestBody Long assigneeId ){
         return taskService.updateTaskAssignee(id,assigneeId);
+    }
+    @DeleteMapping("/tasks/{id}/labels/{labelId}")
+    public void removeLabelToTask(@PathVariable Long id,@PathVariable Long labelId){
+        taskService.removeLabelToTask(id, labelId);
     }
 
     @DeleteMapping ("/tasks/{id}")

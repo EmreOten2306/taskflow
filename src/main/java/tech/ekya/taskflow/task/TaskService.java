@@ -1,6 +1,8 @@
 package tech.ekya.taskflow.task;
 import org.springframework.stereotype.Service;
 import tech.ekya.taskflow.exception.ResourceNotFoundException;
+import tech.ekya.taskflow.label.Label;
+import tech.ekya.taskflow.label.LabelRepository;
 import tech.ekya.taskflow.project.Project;
 import tech.ekya.taskflow.project.ProjectRepository;
 import tech.ekya.taskflow.task.taskenums.TaskStatus;
@@ -12,19 +14,22 @@ import java.util.List;
 
 @Service
 public class TaskService {
-    private TaskRepository taskRepository;
-    private ProjectRepository projectRepository;
-    private TaskMapper taskMapper;
-    private AppUserRepository appUserRepository;
+    private final TaskRepository taskRepository;
+    private final ProjectRepository projectRepository;
+    private final TaskMapper taskMapper;
+    private final AppUserRepository appUserRepository;
+    private final LabelRepository labelRepository;
 
     public TaskService(TaskRepository taskRepository
             , ProjectRepository projectRepository
             , TaskMapper taskMapper
-            , AppUserRepository appUserRepository) {
+            , AppUserRepository appUserRepository
+            , LabelRepository labelRepository) {
         this.taskRepository = taskRepository;
         this.projectRepository = projectRepository;
         this.taskMapper = taskMapper;
         this.appUserRepository = appUserRepository;
+        this.labelRepository = labelRepository;
     }
 
     /// CREATE TASK
@@ -64,7 +69,6 @@ public class TaskService {
                 ));
         taskMapper.updateTaskEntity(task, existingTask);
         return taskRepository.save(existingTask);
-
     }
 
     /// UPDATE TASK STATUS
@@ -91,6 +95,37 @@ public class TaskService {
 
         return taskRepository.save(existingTask);
     }
+
+
+        ///ADD LABEL TO TASK
+        public Task createLabelToTask(Long taskId, Long labelId) {
+            Task existingTask = taskRepository.findById(taskId)
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Task not found with id: " + taskId
+                    ));
+            Label existingLabel = labelRepository.findById(labelId)
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Label not found with id: " + labelId
+                    ));
+            existingTask.getLabels().add(existingLabel);
+            return taskRepository.save(existingTask);
+
+        }
+
+        ///REMOVE LABEL TO TASK
+        public void removeLabelToTask(Long taskId, Long labelId) {
+            Task task = taskRepository.findById(taskId)
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Task not found with id: " + taskId
+                    ));
+            Label label  = labelRepository.findById(labelId)
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Label not found with id: " + labelId
+                    ));
+            task.getLabels().remove(label);
+
+            taskRepository.save(task);
+        }
 
     ///DELETE TASK
     public void deleteTaskById(Long taskId) {
