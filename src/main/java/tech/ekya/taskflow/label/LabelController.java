@@ -1,13 +1,12 @@
 package tech.ekya.taskflow.label;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/tasks/{id}/labels/{labelId}")
+@RequestMapping("/api")
 
 public class LabelController {
     private final LabelService labelService;
@@ -15,11 +14,30 @@ public class LabelController {
         this.labelService = labelService;
     }
 
+@PostMapping("/labels")
+public Label createLabel(@RequestBody Label label) {
+        return labelService.createLabel(label);
+}
+
+@GetMapping("/labels")
+public List<Label> findAllLabels() {
+        return labelService.findAllLabels();
+}
+
+@GetMapping ("/labels/{id}")
+public Label findLabelById(@PathVariable Long id) {
+        return labelService.findLabelById(id);
+}
+
+@PutMapping("/labels/{id}")
+public Label updateLabel(@PathVariable Long id,
+                         @RequestBody Label label) {
+        return labelService.updateLabel(id,label);
+}
 
 
-
-    @DeleteMapping
-    public void deleteLabelById(Long id){
+    @DeleteMapping("/labels/{id}")
+    public void deleteLabelById(@PathVariable Long id){
         labelService.deleteLabelById(id);
     }
 }
