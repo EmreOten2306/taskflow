@@ -97,8 +97,8 @@ public class TaskService {
     }
 
 
-        ///ADD LABEL TO TASK
-        public Task createLabelToTask(Long taskId, Long labelId) {
+        ///Assignee LABEL TO TASK
+        public Task assigneeLabelToTask(Long taskId, Long labelId) {
             Task existingTask = taskRepository.findById(taskId)
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Task not found with id: " + taskId
@@ -113,7 +113,7 @@ public class TaskService {
         }
 
         ///REMOVE LABEL TO TASK
-        public void removeLabelToTask(Long taskId, Long labelId) {
+        public void removeAssigneeLabelToTask(Long taskId, Long labelId) {
             Task task = taskRepository.findById(taskId)
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Task not found with id: " + taskId

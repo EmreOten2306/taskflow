@@ -10,11 +10,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     public List<Task> findByProjectId(Long projectId);
 
-    Long id(Long id);
 
-    Example<? extends Task> Id(Long id);
 
-    Example<? extends Task> id(Long id);
-
-    Long id(Long id);
 }

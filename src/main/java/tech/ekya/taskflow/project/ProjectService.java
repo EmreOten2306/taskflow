@@ -19,7 +19,9 @@ public class ProjectService {
     private final AppUserRepository appUserRepository;
     private final ProjectMapper projectMapper;
 
-    public ProjectService(ProjectRepository projectRepository, AppUserRepository appUserRepository,ProjectMapper projectMapper) {
+    public ProjectService(ProjectRepository projectRepository,
+                          AppUserRepository appUserRepository,
+                          ProjectMapper projectMapper) {
         this.projectRepository = projectRepository;
         this.appUserRepository = appUserRepository;
         this.projectMapper = projectMapper;
@@ -38,8 +40,6 @@ public class ProjectService {
 
         return projectRepository.save(project);
     }
-
-
 
     /// READ
     public List<Project> getAllProjects(ProjectStatus status, Long ownerId, String search) {
