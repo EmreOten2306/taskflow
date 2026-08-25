@@ -20,7 +20,7 @@ public class TaskController {
     @PostMapping("/tasks/{id}/labels/{labelId}")
     public Task createTaskLabel(@PathVariable Long id,
                                 @PathVariable Long labelId){
-        return taskService.createLabelToTask(id, labelId);
+        return taskService.assigneeLabelToTask(id, labelId);
     }
 
 
@@ -51,7 +51,7 @@ public class TaskController {
     }
     @DeleteMapping("/tasks/{id}/labels/{labelId}")
     public void removeLabelToTask(@PathVariable Long id,@PathVariable Long labelId){
-        taskService.removeLabelToTask(id, labelId);
+        taskService.removeAssigneeLabelToTask(id, labelId);
     }
 
     @DeleteMapping ("/tasks/{id}")
