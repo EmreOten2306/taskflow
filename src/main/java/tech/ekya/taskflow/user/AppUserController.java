@@ -1,6 +1,7 @@
 package tech.ekya.taskflow.user;
 
 import org.springframework.web.bind.annotation.*;
+import tech.ekya.taskflow.task.Task;
 
 import java.util.List;
 
@@ -21,6 +22,10 @@ public class AppUserController {
     @GetMapping ("/{id}")
     public AppUser getUserById(@PathVariable Long id){
         return appUserService.getUserById(id);
+    }
+    @GetMapping("/{id}/tasks")
+    public List<Task> getTasksByUserId(@PathVariable Long id){
+        return appUserService.getUserTasks(id);
     }
     @PutMapping ("/{id}")
     public AppUser updateUser(@PathVariable Long id,

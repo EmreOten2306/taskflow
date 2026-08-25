@@ -2,14 +2,19 @@ package tech.ekya.taskflow.user;
 
 import org.springframework.stereotype.Service;
 import tech.ekya.taskflow.exception.ResourceNotFoundException;
+import tech.ekya.taskflow.task.Task;
+import tech.ekya.taskflow.task.TaskRepository;
 
 import java.util.List;
 
 @Service
 public class AppUserService {
     private final AppUserRepository appUserRepository;
-    public AppUserService(AppUserRepository appUserRepository){
+    private final TaskRepository taskRepository;
+
+    public AppUserService(AppUserRepository appUserRepository, TaskRepository taskRepository) {
         this.appUserRepository = appUserRepository;
+        this.taskRepository = taskRepository;
     }
 
     ///GET ALL
@@ -26,7 +31,15 @@ public class AppUserService {
     }
 
 
-    
+    ///GET USER TASK
+    public List<Task> getUserTasks(Long id) {
+        AppUser user = appUserRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User not found with id: " + id
+                ));
+        return taskRepository.findByAssigneeId(id);
+    }
+
 
     ///UPDATE BY ID
     public AppUser updateUser(Long id ,AppUser appUser){
