@@ -1,4 +1,6 @@
 package tech.ekya.taskflow.task;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import tech.ekya.taskflow.task.taskenums.TaskStatus;
 
@@ -25,13 +27,17 @@ public class TaskController {
 
 
     @GetMapping ("/projects/{projectId}/tasks")
-    public List<Task> getAllTasks(@PathVariable Long projectId){
-        return taskService.getAllTasks(projectId);
+    public Page<Task> getAllTasks(@PathVariable Long projectId, Pageable pageable){
+        return taskService.getAllTasks(projectId, pageable);
     }
+
+
     @GetMapping("/tasks/{id}")
     public Task getTaskById(@PathVariable Long id){
         return taskService.getTaskById(id);
     }
+
+
     @PutMapping("/tasks/{id}")
     public Task updateTask(@PathVariable Long id,
                            @RequestBody Task task){

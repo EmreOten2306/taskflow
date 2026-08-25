@@ -1,4 +1,6 @@
 package tech.ekya.taskflow.task;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tech.ekya.taskflow.exception.ResourceNotFoundException;
 import tech.ekya.taskflow.label.Label;
@@ -44,12 +46,12 @@ public class TaskService {
     }
 
     /// GET ALL TASK
-    public List<Task> getAllTasks(Long projectId) {
+    public Page<Task> getAllTasks(Long projectId , Pageable pageable) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Project not found with id: " + projectId
                 ));
-        return taskRepository.findByProjectId(projectId);
+        return taskRepository.findByProjectId(projectId , pageable);
     }
 
     /// GET TASK BY ID
