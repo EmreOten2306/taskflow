@@ -4,11 +4,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import tech.ekya.taskflow.exception.ResourceNotFoundException;
+import tech.ekya.taskflow.exception.UnprocessableEntityException;
 import tech.ekya.taskflow.label.Label;
 
 import tech.ekya.taskflow.label.LabelRepository;
 import tech.ekya.taskflow.project.Project;
 import tech.ekya.taskflow.project.ProjectRepository;
+import tech.ekya.taskflow.project.ProjectStatus;
 import tech.ekya.taskflow.task.taskenums.TaskPriority;
 import tech.ekya.taskflow.task.taskenums.TaskStatus;
 import tech.ekya.taskflow.user.AppUser;
@@ -42,10 +44,14 @@ public class TaskService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Project not found with id: " + projectId
                 ));
-
-        task.setProject(project);
-        return taskRepository.save(task);
-    }
+        if (project.getStatus() == ProjectStatus.ARCHIVED){
+            throw new UnprocessableEntityException(
+                    "Task cannot be created in an archived project"
+            );
+        }
+            task.setProject(project);
+            return taskRepository.save(task);
+          }
 
     /// GET PROJECT'S TASK
     public Page<Task> getProjectTasks(Long projectId ,

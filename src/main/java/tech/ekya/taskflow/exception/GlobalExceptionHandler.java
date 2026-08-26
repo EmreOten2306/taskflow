@@ -35,6 +35,21 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(UnprocessableEntityException.class)
+    public ResponseEntity<ApiError> handleUnprocessableEntityException(UnprocessableEntityException ex,
+                                                                       HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                new ApiError(
+                        Instant.now(),
+                        422,
+                        "Unprocessable Content",
+                        ex.getMessage(),
+                        request.getRequestURI(),
+                        List.of()
+                )
+        );
+    }
+
 
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ApiError> DuplicateResourceException(DuplicateResourceException ex,
