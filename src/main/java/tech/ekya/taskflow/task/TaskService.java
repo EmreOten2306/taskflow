@@ -1,9 +1,11 @@
 package tech.ekya.taskflow.task;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import tech.ekya.taskflow.exception.ResourceNotFoundException;
 import tech.ekya.taskflow.label.Label;
+
 import tech.ekya.taskflow.label.LabelRepository;
 import tech.ekya.taskflow.project.Project;
 import tech.ekya.taskflow.project.ProjectRepository;
@@ -11,7 +13,6 @@ import tech.ekya.taskflow.task.taskenums.TaskPriority;
 import tech.ekya.taskflow.task.taskenums.TaskStatus;
 import tech.ekya.taskflow.user.AppUser;
 import tech.ekya.taskflow.user.AppUserRepository;
-
 import java.time.LocalDateTime;
 
 
@@ -64,29 +65,31 @@ public class TaskService {
                                   Long assigneeId,
                                   LocalDateTime dueBefore,
                                   String search) {
+
+        Specification<Task> spec = Specification.unrestricted();
+
         if (status != null) {
-            return taskRepository.findByStatus(status, pageable);
+            spec = spec.and(TaskSpecification.hasStatus(status));
         }
+
         if (priority != null) {
-            return taskRepository.findByPriority(priority, pageable);
+            spec = spec.and(TaskSpecification.hasPriority(priority));
+
         }
         if (assigneeId != null) {
-            return taskRepository.findByAssigneeId(assigneeId, pageable);
+            spec = spec.and(TaskSpecification.hasAssigneeId(assigneeId));
         }
-        if (dueBefore != null){
-            return taskRepository.findByDueDateBefore(dueBefore, pageable);
+        if (dueBefore != null) {
+            spec = spec.and(TaskSpecification.dueBefore(dueBefore));
         }
+
         if (search != null && !search.isBlank()) {
-            return taskRepository.findByTitleContainingOrDescriptionContaining(
-                    search,
-                    search,
-                    pageable
-            );
+            spec = spec.and(TaskSpecification.search(search));
+
         }
-        return taskRepository.findAll(pageable);
 
+        return taskRepository.findAll(spec, pageable);
     }
-
 
 
     /// GET TASK BY ID
