@@ -1,4 +1,5 @@
 package tech.ekya.taskflow.task;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -7,7 +8,6 @@ import tech.ekya.taskflow.exception.DuplicateResourceException;
 import tech.ekya.taskflow.exception.ResourceNotFoundException;
 import tech.ekya.taskflow.exception.UnprocessableEntityException;
 import tech.ekya.taskflow.label.Label;
-
 import tech.ekya.taskflow.label.LabelRepository;
 import tech.ekya.taskflow.project.Project;
 import tech.ekya.taskflow.project.ProjectRepository;
@@ -18,7 +18,7 @@ import tech.ekya.taskflow.user.AppUser;
 import tech.ekya.taskflow.user.AppUserRepository;
 import java.time.LocalDateTime;
 
-
+@Transactional
 @Service
 public class TaskService {
     private final TaskRepository taskRepository;

@@ -1,5 +1,6 @@
 package tech.ekya.taskflow.user;
 
+import jakarta.transaction.Transactional;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import tech.ekya.taskflow.exception.DuplicateResourceException;
@@ -10,17 +11,17 @@ import tech.ekya.taskflow.task.TaskRepository;
 import tech.ekya.taskflow.task.taskenums.TaskStatus;
 
 import java.util.List;
-
+@Transactional
 @Service
 public class AppUserService {
     private final AppUserRepository appUserRepository;
     private final TaskRepository taskRepository;
-    private final UserDetailsManager userDetailsManager;
 
-    public AppUserService(AppUserRepository appUserRepository, TaskRepository taskRepository, UserDetailsManager userDetailsManager) {
+
+    public AppUserService(AppUserRepository appUserRepository, TaskRepository taskRepository) {
         this.appUserRepository = appUserRepository;
         this.taskRepository = taskRepository;
-        this.userDetailsManager = userDetailsManager;
+
     }
 
     ///GET ALL
