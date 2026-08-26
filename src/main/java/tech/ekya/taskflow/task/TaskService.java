@@ -44,11 +44,21 @@ public class TaskService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Project not found with id: " + projectId
                 ));
-        if (project.getStatus() == ProjectStatus.ARCHIVED){
+
+        if (project.getStatus() == ProjectStatus.ARCHIVED) {
             throw new UnprocessableEntityException(
                     "Task cannot be created in an archived project"
             );
         }
+            if (task.getPriority() == TaskPriority.CRITICAL) {
+            if(task.getDueDate() ==null){
+                throw new UnprocessableEntityException(
+                        "critical task due date should not be null");
+            }
+
+            }
+
+
             task.setProject(project);
             return taskRepository.save(task);
           }
