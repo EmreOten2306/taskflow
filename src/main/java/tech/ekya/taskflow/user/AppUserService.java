@@ -1,9 +1,13 @@
 package tech.ekya.taskflow.user;
 
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
+import tech.ekya.taskflow.exception.DuplicateResourceException;
 import tech.ekya.taskflow.exception.ResourceNotFoundException;
+import tech.ekya.taskflow.exception.UnprocessableEntityException;
 import tech.ekya.taskflow.task.Task;
 import tech.ekya.taskflow.task.TaskRepository;
+import tech.ekya.taskflow.task.taskenums.TaskStatus;
 
 import java.util.List;
 
@@ -11,10 +15,12 @@ import java.util.List;
 public class AppUserService {
     private final AppUserRepository appUserRepository;
     private final TaskRepository taskRepository;
+    private final UserDetailsManager userDetailsManager;
 
-    public AppUserService(AppUserRepository appUserRepository, TaskRepository taskRepository) {
+    public AppUserService(AppUserRepository appUserRepository, TaskRepository taskRepository, UserDetailsManager userDetailsManager) {
         this.appUserRepository = appUserRepository;
         this.taskRepository = taskRepository;
+        this.userDetailsManager = userDetailsManager;
     }
 
     ///GET ALL
@@ -61,6 +67,11 @@ public class AppUserService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "User not found with id: " + id
                 ));
+        if (taskRepository.existsByAssigneeIdAndStatusNot(id, TaskStatus.DONE) ) {
+            throw new DuplicateResourceException(
+                    "User cannot be deleted because they have open tasks");
+        }
+
         appUserRepository.deleteById(id);
     }
 }

@@ -14,8 +14,8 @@ public class Project extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private AppUser owner;
 
     @Column(unique = true)

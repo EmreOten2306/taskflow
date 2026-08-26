@@ -40,8 +40,7 @@ public class TaskController {
                                @RequestParam(required = false) Long assigneeId,
                                @RequestParam(required = false) LocalDateTime dueBefore,
                                @RequestParam(required = false) String search){
-        return taskService.getAllTasks(
-                pageable,
+        return taskService.getAllTasks(pageable,
                 status,
                 priority,
                 assigneeId,

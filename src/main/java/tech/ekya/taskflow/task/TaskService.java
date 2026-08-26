@@ -1,17 +1,21 @@
 package tech.ekya.taskflow.task;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import tech.ekya.taskflow.exception.DuplicateResourceException;
 import tech.ekya.taskflow.exception.ResourceNotFoundException;
+import tech.ekya.taskflow.exception.UnprocessableEntityException;
 import tech.ekya.taskflow.label.Label;
+
 import tech.ekya.taskflow.label.LabelRepository;
 import tech.ekya.taskflow.project.Project;
 import tech.ekya.taskflow.project.ProjectRepository;
+import tech.ekya.taskflow.project.ProjectStatus;
 import tech.ekya.taskflow.task.taskenums.TaskPriority;
 import tech.ekya.taskflow.task.taskenums.TaskStatus;
 import tech.ekya.taskflow.user.AppUser;
 import tech.ekya.taskflow.user.AppUserRepository;
-
 import java.time.LocalDateTime;
 
 
@@ -42,9 +46,35 @@ public class TaskService {
                         "Project not found with id: " + projectId
                 ));
 
-        task.setProject(project);
-        return taskRepository.save(task);
-    }
+        if (project.getStatus() == ProjectStatus.ARCHIVED) {
+            throw new UnprocessableEntityException(
+                    "Task cannot be created in an archived project"
+            );
+        }
+
+            if (task.getPriority() == TaskPriority.CRITICAL) {
+            if(task.getDueDate() ==null){
+                throw new UnprocessableEntityException(
+                        "critical task due date should not be null");
+            }
+            }
+
+        if (taskRepository.existsByProjectIdAndTitle(projectId, task.getTitle())) {
+            throw new DuplicateResourceException(
+                    "A task with the same title already exists in this project"
+            );
+        }
+
+            if (task.getAssignee()!=null){
+                appUserRepository.findById(task.getAssignee().getId()).
+                        orElseThrow(() -> new ResourceNotFoundException(
+                                "Assignee not found with id: " + task.getAssignee().getId()
+                        ));
+
+            }
+            task.setProject(project);
+            return taskRepository.save(task);
+          }
 
     /// GET PROJECT'S TASK
     public Page<Task> getProjectTasks(Long projectId ,
@@ -64,29 +94,31 @@ public class TaskService {
                                   Long assigneeId,
                                   LocalDateTime dueBefore,
                                   String search) {
+
+        Specification<Task> spec = Specification.unrestricted();
+
         if (status != null) {
-            return taskRepository.findByStatus(status, pageable);
+            spec = spec.and(TaskSpecification.hasStatus(status));
         }
+
         if (priority != null) {
-            return taskRepository.findByPriority(priority, pageable);
+            spec = spec.and(TaskSpecification.hasPriority(priority));
+
         }
         if (assigneeId != null) {
-            return taskRepository.findByAssigneeId(assigneeId, pageable);
+            spec = spec.and(TaskSpecification.hasAssigneeId(assigneeId));
         }
-        if (dueBefore != null){
-            return taskRepository.findByDueDateBefore(dueBefore, pageable);
+        if (dueBefore != null) {
+            spec = spec.and(TaskSpecification.dueBefore(dueBefore));
         }
+
         if (search != null && !search.isBlank()) {
-            return taskRepository.findByTitleContainingOrDescriptionContaining(
-                    search,
-                    search,
-                    pageable
-            );
+            spec = spec.and(TaskSpecification.search(search));
+
         }
-        return taskRepository.findAll(pageable);
 
+        return taskRepository.findAll(spec, pageable);
     }
-
 
 
     /// GET TASK BY ID
@@ -98,12 +130,29 @@ public class TaskService {
         return task;
     }
 
-    /// UPDATE TASK
+    /// UPDATE TASK BY ID
     public Task updateTaskById(Long taskId, Task task) {
         Task existingTask = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Task not found with id: " + taskId
                 ));
+            if (task.getAssignee()!=null){
+                appUserRepository.findById(task.getAssignee().getId())
+                        .orElseThrow(() -> new ResourceNotFoundException(
+                                "Assignee not found with id: " + task.getAssignee().getId()
+                        ));
+            }
+
+
+        if (taskRepository.existsByProjectIdAndTitleAndIdNot(
+                existingTask.getProject().getId(),
+                task.getTitle(),
+                taskId)) {
+            throw new DuplicateResourceException(
+                    "A task with the same title already exists in this project"
+            );
+        }
+
         taskMapper.updateTaskEntity(task, existingTask);
         return taskRepository.save(existingTask);
     }
@@ -115,6 +164,12 @@ public class TaskService {
                         "Task not found with id: " + taskId
                 ));
         existingTask.setStatus(status);
+        if (status == TaskStatus.DONE) {
+        existingTask.setCompletedAt(LocalDateTime.now());
+        } else {
+            existingTask.setCompletedAt(null);
+        }
+
         return taskRepository.save(existingTask);
     }
 
