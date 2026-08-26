@@ -12,55 +12,56 @@ VALUES
     (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'UI/UX')
 ON CONFLICT (name) DO NOTHING;
 
+
 -- PROJECTS
 INSERT INTO project (created_at, updated_at, code, description, name, status, owner_id)
 VALUES
-    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'TF001',
+    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'PRJ-001',
      'Task management application',
      'TaskFlow Development',
      'ACTIVE', 1),
 
-    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'TF002',
+    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'PRJ-002',
      'Online shopping platform',
      'E-Commerce Platform',
      'ACTIVE', 2),
 
-    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'TF003',
+    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'PRJ-003',
      'Mobile banking application',
      'Mobile Banking App',
      'ACTIVE', 1),
 
-    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'TF004',
+    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'PRJ-004',
      'Social media application',
      'Social Media Platform',
      'ACTIVE', 2),
 
-    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'TF005',
+    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'PRJ-005',
      'Food ordering and delivery system',
      'Food Delivery System',
      'ACTIVE', 1),
 
-    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'TF006',
+    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'PRJ-006',
      'Hospital management system',
      'Hospital Management',
      'ACTIVE', 2),
 
-    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'TF007',
+    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'PRJ-007',
      'Online learning platform',
      'Online Education Platform',
      'ACTIVE', 1),
 
-    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'TF008',
+    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'PRJ-008',
      'Stock and inventory management system',
      'Inventory Management',
      'ACTIVE', 2),
 
-    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'TF009',
+    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'PRJ-009',
      'Event planning and management system',
      'Event Management',
      'ARCHIVED', 1),
 
-    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'TF010',
+    (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'PRJ-010',
      'Hotel and flight booking platform',
      'Travel Booking System',
      'ARCHIVED', 2)

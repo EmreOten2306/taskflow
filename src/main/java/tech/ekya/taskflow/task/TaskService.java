@@ -1,15 +1,18 @@
 package tech.ekya.taskflow.task;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tech.ekya.taskflow.exception.ResourceNotFoundException;
 import tech.ekya.taskflow.label.Label;
 import tech.ekya.taskflow.label.LabelRepository;
 import tech.ekya.taskflow.project.Project;
 import tech.ekya.taskflow.project.ProjectRepository;
+import tech.ekya.taskflow.task.taskenums.TaskPriority;
 import tech.ekya.taskflow.task.taskenums.TaskStatus;
 import tech.ekya.taskflow.user.AppUser;
 import tech.ekya.taskflow.user.AppUserRepository;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 
 @Service
@@ -43,18 +46,52 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    /// GET ALL TASK
-    public List<Task> getAllTasks(Long projectId) {
+    /// GET PROJECT'S TASK
+    public Page<Task> getProjectTasks(Long projectId ,
+                                  Pageable pageable) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Project not found with id: " + projectId
                 ));
-        return taskRepository.findByProjectId(projectId);
+
+        return taskRepository.findByProjectId(projectId , pageable);
     }
+
+    ///GET ALL TASKS
+    public Page<Task> getAllTasks(Pageable pageable,
+                                  TaskStatus status,
+                                  TaskPriority priority,
+                                  Long assigneeId,
+                                  LocalDateTime dueBefore,
+                                  String search) {
+        if (status != null) {
+            return taskRepository.findByStatus(status, pageable);
+        }
+        if (priority != null) {
+            return taskRepository.findByPriority(priority, pageable);
+        }
+        if (assigneeId != null) {
+            return taskRepository.findByAssigneeId(assigneeId, pageable);
+        }
+        if (dueBefore != null){
+            return taskRepository.findByDueDateBefore(dueBefore, pageable);
+        }
+        if (search != null && !search.isBlank()) {
+            return taskRepository.findByTitleContainingOrDescriptionContaining(
+                    search,
+                    search,
+                    pageable
+            );
+        }
+        return taskRepository.findAll(pageable);
+
+    }
+
+
 
     /// GET TASK BY ID
     public Task getTaskById(Long taskId) {
-        Task task = taskRepository.findById(taskId)
+         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Task not found with id: " + taskId
                 ));
