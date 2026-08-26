@@ -2,9 +2,11 @@ package tech.ekya.taskflow.task;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import tech.ekya.taskflow.task.taskenums.TaskPriority;
 import tech.ekya.taskflow.task.taskenums.TaskStatus;
 
-import java.util.List;
+import java.time.LocalDateTime;
+
 
 @RestController
 @RequestMapping("/api")
@@ -27,8 +29,24 @@ public class TaskController {
 
 
     @GetMapping ("/projects/{projectId}/tasks")
-    public Page<Task> getAllTasks(@PathVariable Long projectId, Pageable pageable){
-        return taskService.getAllTasks(projectId, pageable);
+    public Page<Task> getProjectTasks(@PathVariable Long projectId,
+                                  Pageable pageable){
+        return taskService.getProjectTasks(projectId, pageable);
+    }
+    @GetMapping("/tasks")
+    public Page<Task> getTasks(Pageable pageable,
+                               @RequestParam(required = false) TaskStatus status,
+                               @RequestParam(required = false) TaskPriority priority,
+                               @RequestParam(required = false) Long assigneeId,
+                               @RequestParam(required = false) LocalDateTime dueBefore,
+                               @RequestParam(required = false) String search){
+        return taskService.getAllTasks(
+                pageable,
+                status,
+                priority,
+                assigneeId,
+                dueBefore,
+                search);
     }
 
 
