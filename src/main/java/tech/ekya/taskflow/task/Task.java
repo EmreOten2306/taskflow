@@ -39,6 +39,8 @@ private Project project;
 @ManyToOne
 private AppUser assignee;
 
+private LocalDateTime completedAt;
+
 @JsonIgnore
 @ManyToMany
 @JoinTable(name = "task_label")

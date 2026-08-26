@@ -118,6 +118,12 @@ public class TaskService {
                         "Task not found with id: " + taskId
                 ));
         existingTask.setStatus(status);
+        if (status == TaskStatus.DONE) {
+        existingTask.setCompletedAt(LocalDateTime.now());
+        } else {
+            existingTask.setCompletedAt(null);
+        }
+
         return taskRepository.save(existingTask);
     }
 
