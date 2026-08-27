@@ -1,7 +1,12 @@
 package tech.ekya.taskflow.user;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import tech.ekya.taskflow.task.Task;
+import tech.ekya.taskflow.task.dto.TaskResponse;
+import tech.ekya.taskflow.user.dto.AppUserResponse;
+import tech.ekya.taskflow.user.dto.CreateAppUserRequest;
+import tech.ekya.taskflow.user.dto.UpdateAppUserRequest;
 
 import java.util.List;
 
@@ -14,23 +19,31 @@ public class AppUserController {
         this.appUserService = appUserService;
     }
 
+    @PostMapping
+    public AppUserResponse createAppUser(@Valid @RequestBody CreateAppUserRequest request){
+
+        return appUserService.createAppUser(request);
+    }
+
     @GetMapping
-    public List<AppUser> getAllUsers() {
+    public List<AppUserResponse> getAllUsers() {
         return appUserService.getAllUsers();
     }
 
     @GetMapping ("/{id}")
-    public AppUser getUserById(@PathVariable Long id){
+    public AppUserResponse getUserById(@PathVariable Long id){
         return appUserService.getUserById(id);
     }
     @GetMapping("/{id}/tasks")
-    public List<Task> getTasksByUserId(@PathVariable Long id){
+    public List<TaskResponse> getTasksByUserId(@PathVariable Long id) {
         return appUserService.getUserTasks(id);
     }
+
+
     @PutMapping ("/{id}")
-    public AppUser updateUser(@PathVariable Long id,
-                              @RequestBody AppUser appUser){
-        return appUserService.updateUser(id, appUser);
+    public AppUserResponse updateUser(@PathVariable Long id,
+                                      @RequestBody UpdateAppUserRequest request){
+        return appUserService.updateUser(id, request);
     }
 
     @DeleteMapping ("/{id}")

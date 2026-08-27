@@ -1,7 +1,5 @@
 package tech.ekya.taskflow.project;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import tech.ekya.taskflow.common.BaseEntity;
@@ -14,7 +12,6 @@ public class Project extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private AppUser owner;
 

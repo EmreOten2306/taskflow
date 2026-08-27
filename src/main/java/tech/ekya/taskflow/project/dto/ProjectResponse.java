@@ -1,5 +1,6 @@
 package tech.ekya.taskflow.project.dto;
 import tech.ekya.taskflow.project.ProjectStatus;
+import tech.ekya.taskflow.user.dto.UserSummary;
 
 import java.time.LocalDateTime;
 

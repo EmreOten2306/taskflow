@@ -1,4 +1,5 @@
 package tech.ekya.taskflow.task;
+
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,26 +13,33 @@ import tech.ekya.taskflow.label.LabelRepository;
 import tech.ekya.taskflow.project.Project;
 import tech.ekya.taskflow.project.ProjectRepository;
 import tech.ekya.taskflow.project.ProjectStatus;
+import tech.ekya.taskflow.task.dto.CreateTaskRequest;
+import tech.ekya.taskflow.task.dto.TaskResponse;
+import tech.ekya.taskflow.task.dto.UpdateTaskRequest;
 import tech.ekya.taskflow.task.taskenums.TaskPriority;
 import tech.ekya.taskflow.task.taskenums.TaskStatus;
 import tech.ekya.taskflow.user.AppUser;
 import tech.ekya.taskflow.user.AppUserRepository;
+
 import java.time.LocalDateTime;
 
 @Transactional
 @Service
 public class TaskService {
+
     private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
     private final TaskMapper taskMapper;
     private final AppUserRepository appUserRepository;
     private final LabelRepository labelRepository;
 
-    public TaskService(TaskRepository taskRepository
-            , ProjectRepository projectRepository
-            , TaskMapper taskMapper
-            , AppUserRepository appUserRepository
-            , LabelRepository labelRepository) {
+    public TaskService(
+            TaskRepository taskRepository,
+            ProjectRepository projectRepository,
+            TaskMapper taskMapper,
+            AppUserRepository appUserRepository,
+            LabelRepository labelRepository) {
+
         this.taskRepository = taskRepository;
         this.projectRepository = projectRepository;
         this.taskMapper = taskMapper;
@@ -40,7 +48,10 @@ public class TaskService {
     }
 
     /// CREATE TASK
-    public Task createTask(Long projectId, Task task) {
+    public TaskResponse createTask(
+            Long projectId,
+            CreateTaskRequest request) {
+
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Project not found with id: " + projectId
@@ -52,48 +63,66 @@ public class TaskService {
             );
         }
 
-            if (task.getPriority() == TaskPriority.CRITICAL) {
-            if(task.getDueDate() ==null){
-                throw new UnprocessableEntityException(
-                        "critical task due date should not be null");
-            }
-            }
+        if (request.priority() == TaskPriority.CRITICAL
+                && request.dueDate() == null) {
 
-        if (taskRepository.existsByProjectIdAndTitle(projectId, task.getTitle())) {
+            throw new UnprocessableEntityException(
+                    "critical task due date should not be null"
+            );
+        }
+
+        if (taskRepository.existsByProjectIdAndTitle(
+                projectId,
+                request.title())) {
+
             throw new DuplicateResourceException(
                     "A task with the same title already exists in this project"
             );
         }
 
-            if (task.getAssignee()!=null){
-                appUserRepository.findById(task.getAssignee().getId()).
-                        orElseThrow(() -> new ResourceNotFoundException(
-                                "Assignee not found with id: " + task.getAssignee().getId()
-                        ));
+        Task task = taskMapper.toEntity(request);
 
-            }
-            task.setProject(project);
-            return taskRepository.save(task);
-          }
+        if (request.assigneeId() != null) {
+
+            AppUser assignee = appUserRepository.findById(request.assigneeId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Assignee not found with id: " + request.assigneeId()
+                    ));
+
+            task.setAssignee(assignee);
+        }
+
+        task.setProject(project);
+
+        Task savedTask = taskRepository.save(task);
+
+        return taskMapper.toResponse(savedTask);
+    }
+
 
     /// GET PROJECT'S TASK
-    public Page<Task> getProjectTasks(Long projectId ,
-                                  Pageable pageable) {
-        Project project = projectRepository.findById(projectId)
+    public Page<TaskResponse> getProjectTasks(
+            Long projectId,
+            Pageable pageable) {
+
+        projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Project not found with id: " + projectId
                 ));
 
-        return taskRepository.findByProjectId(projectId , pageable);
+        return taskRepository.findByProjectId(projectId, pageable)
+                .map(taskMapper::toResponse);
     }
 
-    ///GET ALL TASKS
-    public Page<Task> getAllTasks(Pageable pageable,
-                                  TaskStatus status,
-                                  TaskPriority priority,
-                                  Long assigneeId,
-                                  LocalDateTime dueBefore,
-                                  String search) {
+
+    /// GET ALL TASKS
+    public Page<TaskResponse> getAllTasks(
+            Pageable pageable,
+            TaskStatus status,
+            TaskPriority priority,
+            Long assigneeId,
+            LocalDateTime dueBefore,
+            String search) {
 
         Specification<Task> spec = Specification.unrestricted();
 
@@ -103,134 +132,164 @@ public class TaskService {
 
         if (priority != null) {
             spec = spec.and(TaskSpecification.hasPriority(priority));
-
         }
+
         if (assigneeId != null) {
             spec = spec.and(TaskSpecification.hasAssigneeId(assigneeId));
         }
+
         if (dueBefore != null) {
             spec = spec.and(TaskSpecification.dueBefore(dueBefore));
         }
 
         if (search != null && !search.isBlank()) {
             spec = spec.and(TaskSpecification.search(search));
-
         }
 
-        return taskRepository.findAll(spec, pageable);
+        return taskRepository.findAll(spec, pageable)
+                .map(taskMapper::toResponse);
     }
 
 
     /// GET TASK BY ID
-    public Task getTaskById(Long taskId) {
-         Task task = taskRepository.findById(taskId)
+    public TaskResponse getTaskById(Long taskId) {
+
+        Task task = taskRepository.findTaskWithDetailsById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Task not found with id: " + taskId
                 ));
-        return task;
+
+        return taskMapper.toResponse(task);
     }
 
+
     /// UPDATE TASK BY ID
-    public Task updateTaskById(Long taskId, Task task) {
+    public TaskResponse updateTaskById(
+            Long taskId,
+            UpdateTaskRequest request) {
+
         Task existingTask = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Task not found with id: " + taskId
                 ));
-            if (task.getAssignee()!=null){
-                appUserRepository.findById(task.getAssignee().getId())
-                        .orElseThrow(() -> new ResourceNotFoundException(
-                                "Assignee not found with id: " + task.getAssignee().getId()
-                        ));
-            }
-
 
         if (taskRepository.existsByProjectIdAndTitleAndIdNot(
                 existingTask.getProject().getId(),
-                task.getTitle(),
+                request.title(),
                 taskId)) {
+
             throw new DuplicateResourceException(
                     "A task with the same title already exists in this project"
             );
         }
 
-        taskMapper.updateTaskEntity(task, existingTask);
-        return taskRepository.save(existingTask);
+        taskMapper.updateTaskEntity(request, existingTask);
+
+        Task savedTask = taskRepository.save(existingTask);
+
+        return taskMapper.toResponse(savedTask);
     }
 
+
     /// UPDATE TASK STATUS
-    public Task updateTaskStatus(Long taskId, TaskStatus status) {
+    public TaskResponse updateTaskStatus(
+            Long taskId,
+            TaskStatus status) {
+
         Task existingTask = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Task not found with id: " + taskId
                 ));
+
         existingTask.setStatus(status);
+
         if (status == TaskStatus.DONE) {
-        existingTask.setCompletedAt(LocalDateTime.now());
+            existingTask.setCompletedAt(LocalDateTime.now());
         } else {
             existingTask.setCompletedAt(null);
         }
 
-        return taskRepository.save(existingTask);
+        Task savedTask = taskRepository.save(existingTask);
+
+        return taskMapper.toResponse(savedTask);
     }
 
-    /// UPDATE TASK ASSİGNEE
-    public Task updateTaskAssignee(Long taskId, Long assigneeId) {
+
+    /// UPDATE TASK ASSIGNEE
+    public TaskResponse updateTaskAssignee(
+            Long taskId,
+            Long assigneeId) {
+
         Task existingTask = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Task not found with id: " + taskId
                 ));
+
         AppUser assignee = appUserRepository.findById(assigneeId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "User not found with id: " + assigneeId
                 ));
+
         existingTask.setAssignee(assignee);
 
-        return taskRepository.save(existingTask);
+        Task savedTask = taskRepository.save(existingTask);
+
+        return taskMapper.toResponse(savedTask);
     }
 
 
-        ///Assignee LABEL TO TASK
-        public Task assigneeLabelToTask(Long taskId, Long labelId) {
-            Task existingTask = taskRepository.findById(taskId)
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Task not found with id: " + taskId
-                    ));
-            Label existingLabel = labelRepository.findById(labelId)
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Label not found with id: " + labelId
-                    ));
-            existingTask.getLabels().add(existingLabel);
-            return taskRepository.save(existingTask);
+    /// ADD LABEL TO TASK
+    public TaskResponse assigneeLabelToTask(
+            Long taskId,
+            Long labelId) {
 
-        }
-
-        ///REMOVE LABEL TO TASK
-        public void removeAssigneeLabelToTask(Long taskId, Long labelId) {
-            Task task = taskRepository.findById(taskId)
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Task not found with id: " + taskId
-                    ));
-            Label label  = labelRepository.findById(labelId)
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Label not found with id: " + labelId
-                    ));
-            task.getLabels().remove(label);
-
-            taskRepository.save(task);
-        }
-
-    ///DELETE TASK
-    public void deleteTaskById(Long taskId) {
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(()  -> new ResourceNotFoundException(
+        Task existingTask = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "Task not found with id: " + taskId
                 ));
-                        taskRepository.delete(task);
 
+        Label existingLabel = labelRepository.findById(labelId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Label not found with id: " + labelId
+                ));
 
+        existingTask.getLabels().add(existingLabel);
+
+        Task savedTask = taskRepository.save(existingTask);
+
+        return taskMapper.toResponse(savedTask);
     }
 
 
+    /// REMOVE LABEL FROM TASK
+    public void removeAssigneeLabelToTask(
+            Long taskId,
+            Long labelId) {
 
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Task not found with id: " + taskId
+                ));
+
+        Label label = labelRepository.findById(labelId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Label not found with id: " + labelId
+                ));
+
+        task.getLabels().remove(label);
+
+        taskRepository.save(task);
+    }
+
+
+    /// DELETE TASK
+    public void deleteTaskById(Long taskId) {
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Task not found with id: " + taskId
+                ));
+
+        taskRepository.delete(task);
+    }
 }
-
