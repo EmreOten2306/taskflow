@@ -3,6 +3,7 @@ package tech.ekya.taskflow.user;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import tech.ekya.taskflow.task.Task;
+import tech.ekya.taskflow.task.dto.TaskResponse;
 import tech.ekya.taskflow.user.dto.AppUserResponse;
 import tech.ekya.taskflow.user.dto.CreateAppUserRequest;
 import tech.ekya.taskflow.user.dto.UpdateAppUserRequest;
@@ -34,7 +35,7 @@ public class AppUserController {
         return appUserService.getUserById(id);
     }
     @GetMapping("/{id}/tasks")
-    public List<Task> getTasksByUserId(@PathVariable Long id){
+    public List<TaskResponse> getTasksByUserId(@PathVariable Long id) {
         return appUserService.getUserTasks(id);
     }
 

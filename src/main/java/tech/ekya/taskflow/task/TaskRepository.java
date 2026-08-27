@@ -9,14 +9,20 @@ import org.springframework.data.jpa.repository.EntityGraph;
 
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificationExecutor<Task> {
 
+    @EntityGraph(attributePaths = {"project", "assignee", "labels"})
     Page<Task> findByProjectId(Long projectId, Pageable pageable);
+
+    boolean existsByProjectId(Long projectId);
+
     List<Task> findByAssigneeId(Long userId);
 
     boolean existsByProjectIdAndTitle(Long projectId, String title);
-    boolean existsByAssigneeIdAndStatusNot(Long assigneeId, TaskStatus status);
+    boolean existsByAssigneeIdAndStatusNot(Long assigneeId,
+                                           TaskStatus status);
 
     boolean existsByProjectIdAndTitleAndIdNot(
             Long projectId,
@@ -24,8 +30,13 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
             Long taskId
     );
 
-    @EntityGraph(attributePaths = {"project", "assignee"})
-    Page<Task> findAll(Specification<Task> spec, Pageable pageable);
+    long countByProjectId(Long projectId);
 
+    @EntityGraph(attributePaths = {"project", "assignee","labels"})
+    Page<Task> findAll(Specification<Task> spec,
+                       Pageable pageable);
+
+    @EntityGraph(attributePaths = {"project", "assignee", "labels"})
+    Optional<Task> findTaskWithDetailsById(Long id);
 
 }

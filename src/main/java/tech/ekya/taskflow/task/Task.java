@@ -1,6 +1,4 @@
 package tech.ekya.taskflow.task;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +10,7 @@ import tech.ekya.taskflow.task.taskenums.TaskPriority;
 import tech.ekya.taskflow.task.taskenums.TaskStatus;
 import tech.ekya.taskflow.user.AppUser;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Setter
@@ -29,22 +28,19 @@ private TaskPriority priority;
 
 private LocalDateTime dueDate;
 
-@JsonIgnore
 @OneToMany(mappedBy = "task" , cascade = CascadeType.ALL)
 private List<Comment> comments;
 
 @ManyToOne(optional = false)
 private Project project;
 
-@JsonIgnore
 @ManyToOne
 private AppUser assignee;
 
 private LocalDateTime completedAt;
 
-@JsonIgnore
 @ManyToMany
 @JoinTable(name = "task_label")
-private List<Label> labels;
+private List<Label> labels = new ArrayList<>();
 
 }

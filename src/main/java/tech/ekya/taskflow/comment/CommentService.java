@@ -1,12 +1,13 @@
 package tech.ekya.taskflow.comment;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import tech.ekya.taskflow.exception.ResourceNotFoundException;
 import tech.ekya.taskflow.task.Task;
 import tech.ekya.taskflow.task.TaskRepository;
 
 import java.util.List;
-
+@Transactional
 @Service
 public class CommentService {
     private final CommentRepository commentRepository;

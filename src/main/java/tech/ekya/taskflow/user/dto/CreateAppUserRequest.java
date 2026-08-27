@@ -10,6 +10,7 @@ public record CreateAppUserRequest(
         @NotBlank
         @Size(max = 50)
         String fullName,
+
         @NotBlank
         @Size(min = 10, max = 30)
         String password,

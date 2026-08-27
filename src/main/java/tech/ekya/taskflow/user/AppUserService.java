@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import tech.ekya.taskflow.exception.DuplicateResourceException;
 import tech.ekya.taskflow.exception.ResourceNotFoundException;
 import tech.ekya.taskflow.task.Task;
+import tech.ekya.taskflow.task.TaskMapper;
 import tech.ekya.taskflow.task.TaskRepository;
+import tech.ekya.taskflow.task.dto.TaskResponse;
 import tech.ekya.taskflow.task.taskenums.TaskStatus;
 import tech.ekya.taskflow.user.dto.AppUserResponse;
 import tech.ekya.taskflow.user.dto.CreateAppUserRequest;
@@ -16,6 +18,7 @@ import java.util.List;
 @Transactional
 @Service
 public class AppUserService {
+    private final TaskMapper taskMapper;
     private final AppUserRepository appUserRepository;
     private final TaskRepository taskRepository;
     private final PasswordEncoder passwordEncoder;
@@ -24,11 +27,13 @@ public class AppUserService {
     public AppUserService(AppUserRepository appUserRepository,
                           TaskRepository taskRepository,
                           PasswordEncoder passwordEncoder,
-                          AppUserMapper appUserMapper) {
+                          AppUserMapper appUserMapper,
+                          TaskMapper taskMapper) {
         this.appUserRepository = appUserRepository;
         this.taskRepository = taskRepository;
         this.passwordEncoder = passwordEncoder;
         this.appUserMapper = appUserMapper;
+        this.taskMapper = taskMapper;
 
 
     }
@@ -63,18 +68,22 @@ public class AppUserService {
         return appUserMapper.toResponse(appUser);
     }
 
+            ///GET USER TASKS
+    public List<TaskResponse> getUserTasks(Long id) {
 
-    ///GET USER TASK
-    public List<Task> getUserTasks(Long id) {
-        AppUser user = appUserRepository.findById(id)
+        appUserRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "User not found with id: " + id
                 ));
-        return taskRepository.findByAssigneeId(id);
+
+        return taskRepository.findByAssigneeId(id)
+                .stream()
+                .map(taskMapper::toResponse)
+                .toList();
     }
 
 
-    ///UPDATE BY ID
+    /// UPDATE BY ID
     public AppUserResponse updateUser(
             Long id,
             UpdateAppUserRequest request
@@ -83,11 +92,11 @@ public class AppUserService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "User not found with id: " + id
                 ));
+
         appUserMapper.updateEntity(request, existingUser);
-        existingUser.setPasswordHash(
-                passwordEncoder.encode(request.password())
-        );
+
         AppUser savedUser = appUserRepository.save(existingUser);
+
         return appUserMapper.toResponse(savedUser);
     }
 

@@ -3,7 +3,7 @@ import org.springframework.stereotype.Component;
 import tech.ekya.taskflow.project.dto.CreateProjectRequest;
 import tech.ekya.taskflow.project.dto.ProjectResponse;
 import tech.ekya.taskflow.project.dto.UpdateProjectRequest;
-import tech.ekya.taskflow.project.dto.UserSummary;
+import tech.ekya.taskflow.user.dto.UserSummary;
 import tech.ekya.taskflow.user.AppUser;
 
 @Component
@@ -26,8 +26,7 @@ public class ProjectMapper {
         project.setStatus(request.status());
     }
             /// PROJECT RESPONSE
-            public ProjectResponse toResponse(Project project) {
-
+            public ProjectResponse toResponse(Project project, int taskCount) {
                 return new ProjectResponse(
                         project.getId(),
                         project.getCode(),
@@ -35,14 +34,14 @@ public class ProjectMapper {
                         project.getDescription(),
                         project.getStatus(),
                         toUserSummary(project.getOwner()),
-                        0,
+                        taskCount,
                         project.getCreatedAt()
                 );
             }
-
     private UserSummary toUserSummary(AppUser user) {
 
         return new UserSummary(
+                user.getId(),
                 user.getFullName(),
                 user.getEmail()
         );
