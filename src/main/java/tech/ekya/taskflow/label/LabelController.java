@@ -1,6 +1,10 @@
 package tech.ekya.taskflow.label;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+import tech.ekya.taskflow.label.dto.CreateLabelRequest;
+import tech.ekya.taskflow.label.dto.LabelResponse;
+import tech.ekya.taskflow.label.dto.UpdateLabelRequest;
 
 import java.util.List;
 
@@ -14,26 +18,29 @@ public class LabelController {
         this.labelService = labelService;
     }
 
-@PostMapping("/labels")
-public Label createLabel(@RequestBody Label label) {
-        return labelService.createLabel(label);
-}
+    @PostMapping
+    public LabelResponse createLabel(@Valid @RequestBody CreateLabelRequest request) {
 
-@GetMapping("/labels")
-public List<Label> findAllLabels() {
+        return labelService.createLabel(request);
+    }
+
+    @GetMapping("/labels")
+        public List<LabelResponse> findAllLabels() {
         return labelService.findAllLabels();
 }
-
-@GetMapping ("/labels/{id}")
-public Label findLabelById(@PathVariable Long id) {
+    @GetMapping("/labels/{id}")
+    public LabelResponse findLabelById(@PathVariable Long id) {
         return labelService.findLabelById(id);
-}
+    }
 
-@PutMapping("/labels/{id}")
-public Label updateLabel(@PathVariable Long id,
-                         @RequestBody Label label) {
-        return labelService.updateLabel(id,label);
-}
+
+    @PutMapping("/labels/{id}")
+    public LabelResponse updateLabel(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateLabelRequest request
+    ) {
+        return labelService.updateLabel(id, request);
+    }
 
 
     @DeleteMapping("/labels/{id}")

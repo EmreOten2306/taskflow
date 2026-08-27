@@ -1,4 +1,7 @@
 package tech.ekya.taskflow.label.dto;
 
-public record LabelResponse() {
+public record LabelResponse(
+        Long id,
+        String name
+) {
 }

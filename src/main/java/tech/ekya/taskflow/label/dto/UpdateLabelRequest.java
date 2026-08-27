@@ -1,4 +1,13 @@
 package tech.ekya.taskflow.label.dto;
 
-public record UpdateLabelRequest() {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record UpdateLabelRequest(
+
+
+        @NotBlank
+        @Size(max = 50)
+        String name
+) {
 }
