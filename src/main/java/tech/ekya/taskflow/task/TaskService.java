@@ -65,7 +65,13 @@ public class TaskService {
             );
         }
 
+            if (task.getAssignee()!=null){
+                appUserRepository.findById(task.getAssignee().getId()).
+                        orElseThrow(() -> new ResourceNotFoundException(
+                                "Assignee not found with id: " + task.getAssignee().getId()
+                        ));
 
+            }
             task.setProject(project);
             return taskRepository.save(task);
           }
@@ -130,6 +136,14 @@ public class TaskService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Task not found with id: " + taskId
                 ));
+            if (task.getAssignee()!=null){
+                appUserRepository.findById(task.getAssignee().getId())
+                        .orElseThrow(() -> new ResourceNotFoundException(
+                                "Assignee not found with id: " + task.getAssignee().getId()
+                        ));
+            }
+
+
         if (taskRepository.existsByProjectIdAndTitleAndIdNot(
                 existingTask.getProject().getId(),
                 task.getTitle(),
