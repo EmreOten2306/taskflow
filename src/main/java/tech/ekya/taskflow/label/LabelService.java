@@ -1,11 +1,12 @@
 package tech.ekya.taskflow.label;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import tech.ekya.taskflow.exception.DuplicateResourceException;
 import tech.ekya.taskflow.exception.ResourceNotFoundException;
 
 import java.util.List;
-
+@Transactional
 @Service
 public class LabelService {
     private final LabelRepository labelRepository;

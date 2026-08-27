@@ -36,6 +36,7 @@ private List<Comment> comments;
 @ManyToOne(optional = false)
 private Project project;
 
+@JsonIgnore
 @ManyToOne
 private AppUser assignee;
 
