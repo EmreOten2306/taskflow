@@ -2,7 +2,6 @@ package tech.ekya.taskflow.comment;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 
 import lombok.Getter;
 import lombok.Setter;
