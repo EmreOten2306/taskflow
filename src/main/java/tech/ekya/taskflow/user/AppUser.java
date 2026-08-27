@@ -12,8 +12,11 @@ import tech.ekya.taskflow.common.BaseEntity;
 @Getter
 @Entity
 public class AppUser extends BaseEntity {
+
     private String fullName;
+
     private String passwordHash;
+
     @Column (unique = true)
     private String email;
 

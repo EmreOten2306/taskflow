@@ -27,7 +27,6 @@ public class TaskController {
         return taskService.assigneeLabelToTask(id, labelId);
     }
 
-
     @GetMapping ("/projects/{projectId}/tasks")
     public Page<Task> getProjectTasks(@PathVariable Long projectId,
                                   Pageable pageable){
@@ -53,7 +52,6 @@ public class TaskController {
     public Task getTaskById(@PathVariable Long id){
         return taskService.getTaskById(id);
     }
-
 
     @PutMapping("/tasks/{id}")
     public Task updateTask(@PathVariable Long id,

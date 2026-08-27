@@ -19,8 +19,6 @@ public class ProjectController {
         this.projectMapper=projectMapper;
     }
 
-
-
     @PostMapping
     public ProjectResponse createProject(@Valid @RequestBody CreateProjectRequest request){
         Project project = projectMapper.toEntity(request);
