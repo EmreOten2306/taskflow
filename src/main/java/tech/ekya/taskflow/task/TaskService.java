@@ -3,6 +3,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import tech.ekya.taskflow.exception.DuplicateResourceException;
 import tech.ekya.taskflow.exception.ResourceNotFoundException;
 import tech.ekya.taskflow.exception.UnprocessableEntityException;
 import tech.ekya.taskflow.label.Label;
@@ -50,13 +51,19 @@ public class TaskService {
                     "Task cannot be created in an archived project"
             );
         }
+
             if (task.getPriority() == TaskPriority.CRITICAL) {
             if(task.getDueDate() ==null){
                 throw new UnprocessableEntityException(
                         "critical task due date should not be null");
             }
-
             }
+
+        if (taskRepository.existsByProjectIdAndTitle(projectId, task.getTitle())) {
+            throw new DuplicateResourceException(
+                    "A task with the same title already exists in this project"
+            );
+        }
 
 
             task.setProject(project);
@@ -117,12 +124,21 @@ public class TaskService {
         return task;
     }
 
-    /// UPDATE TASK
+    /// UPDATE TASK BY ID
     public Task updateTaskById(Long taskId, Task task) {
         Task existingTask = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Task not found with id: " + taskId
                 ));
+        if (taskRepository.existsByProjectIdAndTitleAndIdNot(
+                existingTask.getProject().getId(),
+                task.getTitle(),
+                taskId)) {
+            throw new DuplicateResourceException(
+                    "A task with the same title already exists in this project"
+            );
+        }
+
         taskMapper.updateTaskEntity(task, existingTask);
         return taskRepository.save(existingTask);
     }

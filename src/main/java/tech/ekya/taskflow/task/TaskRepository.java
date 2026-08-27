@@ -13,5 +13,12 @@ public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificat
     Page<Task> findByProjectId(Long projectId, Pageable pageable);
     List<Task> findByAssigneeId(Long userId);
 
+    boolean existsByProjectIdAndTitle(Long projectId, String title);
     boolean existsByAssigneeIdAndStatusNot(Long assigneeId, TaskStatus status);
+
+    boolean existsByProjectIdAndTitleAndIdNot(
+            Long projectId,
+            String title,
+            Long taskId
+    );
 }
