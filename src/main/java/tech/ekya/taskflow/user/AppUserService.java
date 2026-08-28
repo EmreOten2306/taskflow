@@ -5,7 +5,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import tech.ekya.taskflow.exception.DuplicateResourceException;
 import tech.ekya.taskflow.exception.ResourceNotFoundException;
-import tech.ekya.taskflow.task.Task;
 import tech.ekya.taskflow.task.TaskMapper;
 import tech.ekya.taskflow.task.TaskRepository;
 import tech.ekya.taskflow.task.dto.TaskResponse;

@@ -18,7 +18,7 @@ public class LabelController {
         this.labelService = labelService;
     }
 
-    @PostMapping
+    @PostMapping("/labels")
     public LabelResponse createLabel(@Valid @RequestBody CreateLabelRequest request) {
 
         return labelService.createLabel(request);
