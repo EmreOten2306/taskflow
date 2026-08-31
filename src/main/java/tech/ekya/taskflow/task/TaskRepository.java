@@ -1,11 +1,11 @@
 package tech.ekya.taskflow.task;
-import org.aspectj.weaver.ast.Literal;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import tech.ekya.taskflow.task.taskenums.TaskStatus;
 import org.springframework.data.jpa.repository.EntityGraph;
 
@@ -23,7 +23,15 @@ WHERE t.dueDate < CURRENT_TIMESTAMP
  """)
    List<Task> findOverdueTasks();
 
-
+   @Query(value = """
+   SELECT status, COUNT(*)
+FROM task
+WHERE project_id = :projectId
+GROUP BY status;
+""", nativeQuery = true)
+   List<TaskStatusCountProjection> countByStatusForProject(
+    @Param("projectId") Long projectId
+);
 
 
     @EntityGraph(attributePaths = {"project", "assignee", "labels"})
