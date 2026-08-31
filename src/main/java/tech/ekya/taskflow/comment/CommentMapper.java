@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 import tech.ekya.taskflow.comment.dto.CommentResponse;
 import tech.ekya.taskflow.comment.dto.CreateCommentRequest;
 import tech.ekya.taskflow.comment.dto.UpdateCommentRequest;
-import tech.ekya.taskflow.user.AppUser;
 import tech.ekya.taskflow.user.dto.UserSummary;
 
 @Component
@@ -16,13 +15,6 @@ public class CommentMapper {
         comment.setContent(request.content());
 
         return comment;
-    }
-
-    public void updateEntity(
-            UpdateCommentRequest request,
-            Comment comment
-    ) {
-        comment.setContent(request.content());
     }
 
     public CommentResponse toResponse(Comment comment) {

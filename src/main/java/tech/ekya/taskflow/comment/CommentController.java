@@ -4,8 +4,6 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import tech.ekya.taskflow.comment.dto.CommentResponse;
 import tech.ekya.taskflow.comment.dto.CreateCommentRequest;
-import tech.ekya.taskflow.comment.dto.UpdateCommentRequest;
-
 import java.util.List;
 
 @RestController
@@ -34,14 +32,6 @@ public class CommentController {
         return commentService.findCommentsByTaskId(taskId);
     }
 
-    /// UPDATE COMMENT
-    @PutMapping("/comments/{id}")
-    public CommentResponse updateComment(
-            @PathVariable Long id,
-            @Valid @RequestBody UpdateCommentRequest request
-    ) {
-        return commentService.updateComment(id, request);
-    }
 
     /// DELETE COMMENT
     @DeleteMapping("/comments/{id}")

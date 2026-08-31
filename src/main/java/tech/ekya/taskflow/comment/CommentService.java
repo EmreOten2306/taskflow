@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import tech.ekya.taskflow.comment.dto.CommentResponse;
 import tech.ekya.taskflow.comment.dto.CreateCommentRequest;
-import tech.ekya.taskflow.comment.dto.UpdateCommentRequest;
 import tech.ekya.taskflow.exception.ResourceNotFoundException;
 import tech.ekya.taskflow.task.Task;
 import tech.ekya.taskflow.task.TaskRepository;
@@ -72,25 +71,6 @@ public class CommentService {
                 .map(commentMapper::toResponse)
                 .toList();
     }
-
-    /// UPDATE COMMENT
-    public CommentResponse updateComment(
-            Long id,
-            UpdateCommentRequest request
-    ) {
-
-        Comment existingComment = commentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Comment not found with id: " + id
-                ));
-
-        commentMapper.updateEntity(request, existingComment);
-
-        Comment savedComment = commentRepository.save(existingComment);
-
-        return commentMapper.toResponse(savedComment);
-    }
-
     /// DELETE COMMENT
     public void deleteComment(Long commentId) {
 

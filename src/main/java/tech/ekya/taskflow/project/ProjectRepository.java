@@ -1,6 +1,5 @@
 package tech.ekya.taskflow.project;
 
-import jakarta.persistence.Entity;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
