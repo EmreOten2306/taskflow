@@ -23,6 +23,7 @@ WHERE t.dueDate < CURRENT_TIMESTAMP
  """)
    List<Task> findOverdueTasks();
 
+
    @Query(value = """
    SELECT status, COUNT(*)
 FROM task
