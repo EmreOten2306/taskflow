@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import tech.ekya.taskflow.report.dto.ProjectStatusBreakdownResponse;
 import tech.ekya.taskflow.report.dto.TaskOverdueResponse;
 import tech.ekya.taskflow.report.dto.UserWorkloadResponse;
-import tech.ekya.taskflow.task.Task;
+import tech.ekya.taskflow.report.dto.WeeklyCompletionTrendResponse;
 
 import java.util.List;
 
@@ -15,6 +15,10 @@ public class ReportService {
     private final ReportJdbcRepository reportJdbcRepository;
     public ReportService(ReportJdbcRepository reportJdbcRepository) {
         this.reportJdbcRepository = reportJdbcRepository;
+    }
+
+    public List<WeeklyCompletionTrendResponse> getWeeklyCompletionTrendResponse() {
+        return reportJdbcRepository.getWeeklyCompletionTrend();
     }
 
     public List<TaskOverdueResponse> getOverdueTasks() {

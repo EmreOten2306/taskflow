@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import tech.ekya.taskflow.report.dto.ProjectStatusBreakdownResponse;
 import tech.ekya.taskflow.report.dto.TaskOverdueResponse;
 import tech.ekya.taskflow.report.dto.UserWorkloadResponse;
-import tech.ekya.taskflow.task.Task;
+import tech.ekya.taskflow.report.dto.WeeklyCompletionTrendResponse;
 
 import java.util.List;
 
@@ -32,7 +32,10 @@ public class ReportController {
     public List<TaskOverdueResponse> getOverdueTasks() {
         return reportService.getOverdueTasks();
     }
-
+    @GetMapping ("/completion-trend")
+    public List<WeeklyCompletionTrendResponse> getWeeklyCompletionTrend() {
+        return reportService.getWeeklyCompletionTrendResponse();
+    }
 
 
 }

@@ -1,12 +1,15 @@
 package tech.ekya.taskflow.report;
 
+import org.springframework.cglib.core.Local;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import tech.ekya.taskflow.report.dto.ProjectStatusBreakdownResponse;
 import tech.ekya.taskflow.report.dto.TaskOverdueResponse;
 import tech.ekya.taskflow.report.dto.UserWorkloadResponse;
+import tech.ekya.taskflow.report.dto.WeeklyCompletionTrendResponse;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,6 +22,43 @@ public class ReportJdbcRepository {
     public ReportJdbcRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
+    public List<WeeklyCompletionTrendResponse> getWeeklyCompletionTrend() {
+        String sql = """
+                SELECT
+                    weeks.week_start,
+                    COUNT(task.id) AS completed_count
+                FROM generate_series(
+                    date_trunc('week', CURRENT_DATE) - interval '7 weeks',
+                    date_trunc('week', CURRENT_DATE),
+                    interval '1 week'
+                ) AS weeks(week_start)
+                LEFT JOIN task
+                    ON weeks.week_start = date_trunc('week', task.completed_at)
+                    AND task.status = 'DONE'
+                GROUP BY weeks.week_start
+                ORDER BY weeks.week_start;
+                
+                """;
+        RowMapper<WeeklyCompletionTrendResponse> rowMapper =
+                (rs, rowNum) -> {
+                    LocalDate date = rs.getDate("week_start").toLocalDate();
+                    Long completedCount = rs.getLong("completed_count");
+
+                    return new WeeklyCompletionTrendResponse(
+                            date,
+                            completedCount
+                    );
+                };
+
+        return jdbcTemplate.query(
+                sql,
+                rowMapper
+        );
+
+    }
+
+
 
     public List<TaskOverdueResponse>  getTaskOverdue() {
         String sql = """
