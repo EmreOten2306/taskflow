@@ -3,6 +3,9 @@ package tech.ekya.taskflow.report;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import tech.ekya.taskflow.report.dto.ProjectStatusBreakdownResponse;
+import tech.ekya.taskflow.report.dto.UserWorkloadResponse;
+
+import java.util.List;
 
 @Transactional
 @Service
@@ -12,10 +15,15 @@ public class ReportService {
         this.reportJdbcRepository = reportJdbcRepository;
     }
 
+    public List<UserWorkloadResponse> getUserWorkloads() {
+        return  reportJdbcRepository.getUserWorkload();
+    }
+
     public ProjectStatusBreakdownResponse getProjectStatusBreakdown(Long projectId) {
 
         return reportJdbcRepository.getProjectStatusBreakdown(projectId);
     }
+
 
 }
 

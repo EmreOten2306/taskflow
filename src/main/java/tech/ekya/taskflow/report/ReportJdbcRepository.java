@@ -4,6 +4,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import tech.ekya.taskflow.report.dto.ProjectStatusBreakdownResponse;
+import tech.ekya.taskflow.report.dto.UserWorkloadResponse;
+
+import java.util.List;
 
 
 @Repository
@@ -14,6 +17,58 @@ public class ReportJdbcRepository {
     public ReportJdbcRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
+    public List<UserWorkloadResponse> getUserWorkload() {
+        String sql = """
+                SELECT
+                app_user.full_name,
+                SUM(CASE
+                	WHEN priority = 'HIGH' THEN 1
+                	ELSE 0
+                END
+                ) AS high_count,
+                SUM(CASE
+                	WHEN priority = 'MEDIUM' THEN 1
+                	ELSE 0
+                END
+                ) AS medium_count,
+                SUM(CASE
+                	WHEN priority = 'LOW' THEN 1
+                	ELSE 0
+                END
+                ) AS low_count
+                FROM app_user
+                LEFT JOIN task
+                ON app_user.id = task.assignee_id
+                AND status IN('TODO','IN_PROGRESS','IN_REVIEW')
+                GROUP BY app_user.full_name;
+                """;
+        RowMapper<UserWorkloadResponse> rowMapper =
+                (rs, rowNum) -> {
+                    String fullName = rs.getString("full_Name");
+                    Long highCount = rs.getLong("high_count");
+                    Long mediumCount = rs.getLong("medium_count");
+                    Long lowCount = rs.getLong("low_count");
+
+                    return new UserWorkloadResponse(
+                            fullName,
+                             highCount,
+                            mediumCount,
+                            lowCount
+                    );
+                };
+
+        return jdbcTemplate.query(
+                sql,
+                rowMapper
+        );
+
+    }
+
+
+
+
+
     public ProjectStatusBreakdownResponse getProjectStatusBreakdown(Long projectId) {
 
         String sql = """
