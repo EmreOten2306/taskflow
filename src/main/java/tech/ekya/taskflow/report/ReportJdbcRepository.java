@@ -4,8 +4,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import tech.ekya.taskflow.report.dto.ProjectStatusBreakdownResponse;
+import tech.ekya.taskflow.report.dto.TaskOverdueResponse;
 import tech.ekya.taskflow.report.dto.UserWorkloadResponse;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -16,6 +18,39 @@ public class ReportJdbcRepository {
     private final JdbcTemplate jdbcTemplate;
     public ReportJdbcRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public List<TaskOverdueResponse>  getTaskOverdue() {
+        String sql = """
+                SELECT
+                id,
+                title,
+                due_Date,
+                CURRENT_DATE - due_date::date AS delay_days
+                FROM task
+                WHERE due_date <CURRENT_DATE
+                AND status != 'DONE'
+                """;
+        RowMapper<TaskOverdueResponse> rowMapper =
+                (rs, rowNum) -> {
+                    Long id = rs.getLong("id");
+                    String title = rs.getString("title");
+                    LocalDateTime dueDate = rs.getTimestamp("due_date").toLocalDateTime();
+                    Long  delay_days = rs.getLong("delay_days");
+
+                    return new TaskOverdueResponse(
+                            id,
+                            title,
+                            dueDate,
+                            delay_days
+                    );
+                };
+
+        return jdbcTemplate.query(
+                sql,
+                rowMapper
+        );
+
     }
 
     public List<UserWorkloadResponse> getUserWorkload() {

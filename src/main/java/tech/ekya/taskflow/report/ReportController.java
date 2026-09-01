@@ -5,7 +5,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tech.ekya.taskflow.report.dto.ProjectStatusBreakdownResponse;
+import tech.ekya.taskflow.report.dto.TaskOverdueResponse;
 import tech.ekya.taskflow.report.dto.UserWorkloadResponse;
+import tech.ekya.taskflow.task.Task;
 
 import java.util.List;
 
@@ -22,9 +24,13 @@ public class ReportController {
         return reportService.getProjectStatusBreakdown(projectId);
 
     }
-    @GetMapping("/reports/workload")
+    @GetMapping("/workload")
     public List<UserWorkloadResponse> getUserWorkload() {
         return reportService.getUserWorkloads();
+    }
+    @GetMapping ("/overdue")
+    public List<TaskOverdueResponse> getOverdueTasks() {
+        return reportService.getOverdueTasks();
     }
 
 
