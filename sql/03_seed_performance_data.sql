@@ -43,6 +43,12 @@ SELECT
     100013 + ((i - 1) % 50000)
 FROM generate_series(1, 100000) AS s(i);
 
-SELECT MIN(id), MAX(id), COUNT(*)
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT
+    id,
+    title,
+    due_Date,
+    CURRENT_DATE - due_date::date AS delay_days
 FROM task
-WHERE title LIKE 'Task #%';
+WHERE due_date < CURRENT_DATE
+  AND status != 'DONE';
