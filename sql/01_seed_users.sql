@@ -1,13 +1,13 @@
 INSERT INTO app_user (full_name, email, password_hash, role)
 VALUES ('Admin User',
         'admin@taskflow.local',
-        '$2a$10$OGDeCybfD0RKlAkCnLWsO.FafD5ns9Uh8miwzzXJOznzEl1SSJwu6',
+        '$2a$10$sr3nPaI4.syPlnF7Sm.81OnKO9umWYAg.X6c.pZn549.hAXpSoVkq',
         'ADMIN')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO app_user (full_name, email, password_hash, role)
 VALUES ('Member User',
         'member@taskflow.local',
-        '$2a$10$Aj8wYErgacHqbhoLchzB1O3YJnBaQ8RGSyIUEiwOHIkF10LG59glm',
+        '$2a$10$0FhUAgOwP7/ds2q.Csp5BuAP1pGp2UE9p.2BKSnawk40IHQmOpHS2',
         'MEMBER')
 ON CONFLICT DO NOTHING;
