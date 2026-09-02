@@ -2,10 +2,7 @@ package tech.ekya.taskflow.report;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import tech.ekya.taskflow.report.dto.ProjectStatusBreakdownResponse;
-import tech.ekya.taskflow.report.dto.TaskOverdueResponse;
-import tech.ekya.taskflow.report.dto.UserWorkloadResponse;
-import tech.ekya.taskflow.report.dto.WeeklyCompletionTrendResponse;
+import tech.ekya.taskflow.report.dto.*;
 
 import java.util.List;
 
@@ -15,6 +12,9 @@ public class ReportService {
     private final ReportJdbcRepository reportJdbcRepository;
     public ReportService(ReportJdbcRepository reportJdbcRepository) {
         this.reportJdbcRepository = reportJdbcRepository;
+    }
+    public List<MostUsedLabelResponse>  getMostUsedLabels() {
+        return reportJdbcRepository.getMostUsedLabels();
     }
 
     public List<WeeklyCompletionTrendResponse> getWeeklyCompletionTrendResponse() {

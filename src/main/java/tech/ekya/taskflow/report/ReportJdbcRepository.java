@@ -4,10 +4,7 @@ import org.springframework.cglib.core.Local;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import tech.ekya.taskflow.report.dto.ProjectStatusBreakdownResponse;
-import tech.ekya.taskflow.report.dto.TaskOverdueResponse;
-import tech.ekya.taskflow.report.dto.UserWorkloadResponse;
-import tech.ekya.taskflow.report.dto.WeeklyCompletionTrendResponse;
+import tech.ekya.taskflow.report.dto.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,6 +18,35 @@ public class ReportJdbcRepository {
     private final JdbcTemplate jdbcTemplate;
     public ReportJdbcRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public List<MostUsedLabelResponse> getMostUsedLabels() {
+        String sql = """
+                SELECT
+                    label.name,
+                    COUNT(task_label.tasks_id) AS usage_count
+                FROM label
+                JOIN task_label
+                    ON label.id = task_label.labels_id
+                GROUP BY label.name
+                ORDER BY usage_count DESC
+                LIMIT 10;
+                """;
+
+        RowMapper<MostUsedLabelResponse> rowMapper =
+                (rs, rowNum) -> {
+            String labelName = rs.getString("name");
+            Long usageCount = rs.getLong("usage_count");
+            return new MostUsedLabelResponse(
+                    labelName,
+                    usageCount);
+                };
+
+        return jdbcTemplate.query(
+                sql,
+                rowMapper
+        );
+
     }
 
     public List<WeeklyCompletionTrendResponse> getWeeklyCompletionTrend() {

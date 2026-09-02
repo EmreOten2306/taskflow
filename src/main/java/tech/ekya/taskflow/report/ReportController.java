@@ -4,10 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tech.ekya.taskflow.report.dto.ProjectStatusBreakdownResponse;
-import tech.ekya.taskflow.report.dto.TaskOverdueResponse;
-import tech.ekya.taskflow.report.dto.UserWorkloadResponse;
-import tech.ekya.taskflow.report.dto.WeeklyCompletionTrendResponse;
+import tech.ekya.taskflow.report.dto.*;
 
 import java.util.List;
 
@@ -36,6 +33,9 @@ public class ReportController {
     public List<WeeklyCompletionTrendResponse> getWeeklyCompletionTrend() {
         return reportService.getWeeklyCompletionTrendResponse();
     }
-
+    @GetMapping ("/labels/top")
+    public List<MostUsedLabelResponse> getMostUsedLabels() {
+        return reportService.getMostUsedLabels();
+    }
 
 }
