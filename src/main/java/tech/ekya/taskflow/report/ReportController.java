@@ -37,5 +37,9 @@ public class ReportController {
     public List<MostUsedLabelResponse> getMostUsedLabels() {
         return reportService.getMostUsedLabels();
     }
+    @GetMapping ("/projects/health")
+    public List<ProjectHealthResponse> getProjectHealth() {
+        return reportService.getProjectHealth();
+    }
 
 }

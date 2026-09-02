@@ -13,6 +13,10 @@ public class ReportService {
     public ReportService(ReportJdbcRepository reportJdbcRepository) {
         this.reportJdbcRepository = reportJdbcRepository;
     }
+    public List<ProjectHealthResponse> getProjectHealth() {
+        return reportJdbcRepository.getProjectHealth();
+    }
+
     public List<MostUsedLabelResponse>  getMostUsedLabels() {
         return reportJdbcRepository.getMostUsedLabels();
     }

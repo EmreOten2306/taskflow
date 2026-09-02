@@ -1,11 +1,10 @@
 package tech.ekya.taskflow.report;
-
-import org.springframework.cglib.core.Local;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import tech.ekya.taskflow.report.dto.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,6 +17,97 @@ public class ReportJdbcRepository {
     private final JdbcTemplate jdbcTemplate;
     public ReportJdbcRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public List<ProjectHealthResponse> getProjectHealth() {
+
+        String sql = """
+            WITH project_stats AS (
+                SELECT
+                    project.id AS project_id,
+                    project.name AS project_name,
+                    COUNT(task.id) AS total_tasks,
+
+                    COUNT(
+                        CASE
+                            WHEN task.status = 'DONE' THEN 1
+                        END
+                    ) AS completed_tasks,
+
+                    SUM(
+                        CASE
+                            WHEN task.due_date < CURRENT_DATE
+                                 AND task.status != 'DONE'
+                            THEN 1
+                            ELSE 0
+                        END
+                    ) AS overdue_tasks,
+
+                    AVG(
+                        CASE
+                            WHEN task.status = 'DONE'
+                            THEN EXTRACT(
+                                EPOCH FROM (task.completed_at - task.created_at)
+                            ) / 86400
+                        END
+                    ) AS average_completion_days
+
+                FROM project
+                LEFT JOIN task
+                    ON project.id = task.project_id
+
+                GROUP BY
+                    project.id,
+                    project.name
+            )
+
+            SELECT
+                project_name,
+
+                ROUND(
+                    completed_tasks * 100.0
+                    / NULLIF(total_tasks, 0),
+                    2
+                ) AS completion_percentage,
+
+                ROUND(
+                    overdue_tasks * 100.0
+                    / NULLIF(total_tasks, 0),
+                    2
+                ) AS overdue_percentage,
+
+                ROUND(
+                    average_completion_days,
+                    2
+                ) AS average_completion_days
+
+            FROM project_stats
+
+            ORDER BY project_name;
+            """;
+
+        RowMapper<ProjectHealthResponse> rowMapper =
+                (rs, rowNum) -> {
+                    String projectName = rs.getString("project_name");
+                    BigDecimal completionPercentage =
+                            rs.getBigDecimal("completion_percentage");
+                    BigDecimal overduePercentage =
+                            rs.getBigDecimal("overdue_percentage");
+                    BigDecimal averageCompletionDays =
+                            rs.getBigDecimal("average_completion_days");
+
+                    return new ProjectHealthResponse(
+                            projectName,
+                            completionPercentage,
+                            overduePercentage,
+                            averageCompletionDays
+                    );
+                };
+
+        return jdbcTemplate.query(
+                sql,
+                rowMapper
+        );
     }
 
     public List<MostUsedLabelResponse> getMostUsedLabels() {
