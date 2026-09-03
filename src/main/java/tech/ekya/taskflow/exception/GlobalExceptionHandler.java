@@ -49,6 +49,20 @@ public class GlobalExceptionHandler {
                 )
         );
     }
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ApiError> handleUnauthorizedException(UnauthorizedException ex,
+                                                                HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                new ApiError(
+                        Instant.now(),
+                        401,
+                        "Unauthorized",
+                        ex.getMessage(),
+                        request.getRequestURI(),
+                        List.of()
+                )
+        );
+    }
 
 
     @ExceptionHandler(DuplicateResourceException.class)

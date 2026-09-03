@@ -16,6 +16,7 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secret;
 
+    /// JWT imzalama anahtarını oluşturur
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
@@ -23,7 +24,7 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long expiration;
 
-
+    /// Kullanıcı için JWT token oluşturur.
     public String generateToken(AppUser user) {
         return Jwts.builder()
                 .subject(user.getId().toString())
@@ -33,11 +34,11 @@ public class JwtService {
                 .compact();
 
     }
-
+    /// JWT token'ın geçerli olup olmadığını kontrol eder.
     public boolean isTokenValid(String token) {
 
         try {
-            Jwts.parser()
+                    Jwts.parser()
                     .verifyWith(getSigningKey())
                     .build()
                     .parseSignedClaims(token);
@@ -46,12 +47,12 @@ public class JwtService {
             return false;
         }
     }
-
+    /// JWT içinden kullanıcı ID'sini çıkarır.
     public Long extractUserId(String token) {
 
         try {
           return  Long.parseLong(
-            Jwts.parser()
+                    Jwts.parser()
                     .verifyWith(getSigningKey())
                     .build()
                     .parseSignedClaims(token)
