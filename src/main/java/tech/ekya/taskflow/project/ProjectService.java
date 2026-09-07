@@ -2,6 +2,7 @@ package tech.ekya.taskflow.project;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import tech.ekya.taskflow.exception.AccessDeniedException;
 import tech.ekya.taskflow.exception.DuplicateResourceException;
 import tech.ekya.taskflow.exception.ResourceNotFoundException;
 import tech.ekya.taskflow.project.dto.CreateProjectRequest;
@@ -10,6 +11,8 @@ import tech.ekya.taskflow.project.dto.UpdateProjectRequest;
 import tech.ekya.taskflow.task.TaskRepository;
 import tech.ekya.taskflow.user.AppUser;
 import tech.ekya.taskflow.user.AppUserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -135,6 +138,14 @@ public class ProjectService {
                         "Project not found with id: " + id
                 ));
 
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        AppUser currentUser = (AppUser) authentication.getPrincipal();
+
+        if (!existingProject.getOwner().getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException("You are not the owner of this project");
+        }
         existingProject.setStatus(status);
 
         Project savedProject = projectRepository.save(existingProject);
@@ -158,6 +169,15 @@ public class ProjectService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Project not found with id: " + id
                 ));
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        AppUser currentUser = (AppUser) authentication.getPrincipal();
+
+        if (!existingProject.getOwner().getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException("You are not the owner of this project");
+        }
+
 
         projectMapper.updateEntity(
                 request,
@@ -181,6 +201,8 @@ public class ProjectService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Project not found with id: " + id
                 ));
+
+
         if (taskRepository.existsByProjectId(id)) {
             throw new DuplicateResourceException(
                     "Project cannot be deleted because it has tasks"

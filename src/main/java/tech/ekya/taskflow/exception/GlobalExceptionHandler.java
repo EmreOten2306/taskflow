@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.time.Instant;
 import java.util.List;
@@ -35,6 +36,38 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiError> handleAccessDeniedException(AccessDeniedException ex,
+                                                                HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                new ApiError(
+                        Instant.now(),
+                        403,
+                        "Forbidden",
+                        ex.getMessage(),
+                        request.getRequestURI(),
+                        List.of()
+
+                )
+        );
+    }
+    @ExceptionHandler(tech.ekya.taskflow.exception.AccessDeniedException.class)
+    public ResponseEntity<ApiError> handleCustomAccessDeniedException(
+            tech.ekya.taskflow.exception.AccessDeniedException ex,
+            HttpServletRequest request) {
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                new ApiError(
+                        Instant.now(),
+                        403,
+                        "Forbidden",
+                        ex.getMessage(),
+                        request.getRequestURI(),
+                        List.of()
+                )
+        );
+    }
+
     @ExceptionHandler(UnprocessableEntityException.class)
     public ResponseEntity<ApiError> handleUnprocessableEntityException(UnprocessableEntityException ex,
                                                                        HttpServletRequest request) {
@@ -43,6 +76,20 @@ public class GlobalExceptionHandler {
                         Instant.now(),
                         422,
                         "Unprocessable Content",
+                        ex.getMessage(),
+                        request.getRequestURI(),
+                        List.of()
+                )
+        );
+    }
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ApiError> handleUnauthorizedException(UnauthorizedException ex,
+                                                                HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                new ApiError(
+                        Instant.now(),
+                        401,
+                        "Unauthorized",
                         ex.getMessage(),
                         request.getRequestURI(),
                         List.of()

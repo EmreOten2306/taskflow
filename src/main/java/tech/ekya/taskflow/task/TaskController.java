@@ -1,5 +1,8 @@
 package tech.ekya.taskflow.task;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -15,6 +18,10 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api")
+@Tag(
+        name = "Tasks",
+        description = "Task management operations"
+)
 public class TaskController {
 
     private final TaskService taskService;
@@ -23,8 +30,13 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-
     /// CREATE TASK
+    @Operation(
+            summary = "Create a task",
+            description = "Creates a new task for a project"
+    )
+    @ApiResponse(responseCode = "200", description = "Task created successfully")
+    @ApiResponse(responseCode = "404", description = "Project not found")
     @PostMapping("/projects/{id}/tasks")
     public TaskResponse createTask(
             @Valid @RequestBody CreateTaskRequest request,
@@ -35,6 +47,12 @@ public class TaskController {
 
 
     /// GET PROJECT'S TASKS
+    @Operation(
+            summary = "Get project tasks",
+            description = "Returns paginated tasks belonging to a project"
+    )
+    @ApiResponse(responseCode = "200", description = "Project tasks retrieved successfully")
+    @ApiResponse(responseCode = "404", description = "Project not found")
     @GetMapping("/projects/{id}/tasks")
     public Page<TaskResponse> getProjectTasks(
             @PathVariable Long id,
@@ -45,9 +63,14 @@ public class TaskController {
 
 
     /// GET ALL TASKS
+    @Operation(
+            summary = "Get all tasks",
+            description = "Returns paginated tasks with optional filtering and search"
+    )
+    @ApiResponse(responseCode = "200", description = "Tasks retrieved successfully")
     @GetMapping("/tasks")
     public Page<TaskResponse> getTasks(
-            @ParameterObject  Pageable pageable,
+            @ParameterObject Pageable pageable,
             @RequestParam(required = false) TaskStatus status,
             @RequestParam(required = false) TaskPriority priority,
             @RequestParam(required = false) Long assigneeId,
@@ -66,6 +89,12 @@ public class TaskController {
 
 
     /// GET TASK BY ID
+    @Operation(
+            summary = "Get task by ID",
+            description = "Returns a task by its ID"
+    )
+    @ApiResponse(responseCode = "200", description = "Task retrieved successfully")
+    @ApiResponse(responseCode = "404", description = "Task not found")
     @GetMapping("/tasks/{id}")
     public TaskResponse getTaskById(
             @PathVariable Long id) {
@@ -75,6 +104,12 @@ public class TaskController {
 
 
     /// UPDATE TASK
+    @Operation(
+            summary = "Update a task",
+            description = "Updates an existing task by its ID"
+    )
+    @ApiResponse(responseCode = "200", description = "Task updated successfully")
+    @ApiResponse(responseCode = "404", description = "Task not found")
     @PutMapping("/tasks/{id}")
     public TaskResponse updateTask(
             @PathVariable Long id,
@@ -85,6 +120,12 @@ public class TaskController {
 
 
     /// UPDATE TASK STATUS
+    @Operation(
+            summary = "Update task status",
+            description = "Updates the status of an existing task"
+    )
+    @ApiResponse(responseCode = "200", description = "Task status updated successfully")
+    @ApiResponse(responseCode = "404", description = "Task not found")
     @PatchMapping("/tasks/{id}/status")
     public TaskResponse updateTaskStatus(
             @PathVariable Long id,
@@ -95,6 +136,12 @@ public class TaskController {
 
 
     /// UPDATE TASK ASSIGNEE
+    @Operation(
+            summary = "Update task assignee",
+            description = "Changes the user assigned to a task"
+    )
+    @ApiResponse(responseCode = "200", description = "Task assignee updated successfully")
+    @ApiResponse(responseCode = "404", description = "Task or user not found")
     @PatchMapping("/tasks/{id}/assignee")
     public TaskResponse updateTaskAssignee(
             @PathVariable Long id,
@@ -105,6 +152,12 @@ public class TaskController {
 
 
     /// ADD LABEL TO TASK
+    @Operation(
+            summary = "Add label to task",
+            description = "Assigns a label to a task"
+    )
+    @ApiResponse(responseCode = "200", description = "Label added to task successfully")
+    @ApiResponse(responseCode = "404", description = "Task or label not found")
     @PostMapping("/tasks/{id}/labels/{labelId}")
     public TaskResponse createTaskLabel(
             @PathVariable Long id,
@@ -115,6 +168,12 @@ public class TaskController {
 
 
     /// REMOVE LABEL FROM TASK
+    @Operation(
+            summary = "Remove label from task",
+            description = "Removes a label from a task"
+    )
+    @ApiResponse(responseCode = "200", description = "Label removed from task successfully")
+    @ApiResponse(responseCode = "404", description = "Task or label not found")
     @DeleteMapping("/tasks/{id}/labels/{labelId}")
     public void removeLabelToTask(
             @PathVariable Long id,
@@ -125,6 +184,12 @@ public class TaskController {
 
 
     /// DELETE TASK
+    @Operation(
+            summary = "Delete a task",
+            description = "Deletes a task by its ID"
+    )
+    @ApiResponse(responseCode = "200", description = "Task deleted successfully")
+    @ApiResponse(responseCode = "404", description = "Task not found")
     @DeleteMapping("/tasks/{id}")
     public void deleteTaskById(
             @PathVariable Long id) {

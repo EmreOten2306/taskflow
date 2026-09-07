@@ -35,6 +35,8 @@ GROUP BY status;
 );
 
 
+
+
     @EntityGraph(attributePaths = {"project", "assignee", "labels"})
     Page<Task> findByProjectId(Long projectId, Pageable pageable);
 

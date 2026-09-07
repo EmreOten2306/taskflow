@@ -1,5 +1,6 @@
 package tech.ekya.taskflow.task;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import tech.ekya.taskflow.comment.Comment;
@@ -19,6 +20,8 @@ import java.util.List;
 public class Task extends BaseEntity {
 
 private String title;
+
+@Size(max = 1000)
 private String description;
 
     @Enumerated(EnumType.STRING)
