@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.filter.OncePerRequestFilter;
+import tech.ekya.taskflow.exception.UnauthorizedException;
 import tech.ekya.taskflow.user.AppUser;
 import tech.ekya.taskflow.user.AppUserRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -48,7 +49,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         Long userId = jwtService.extractUserId(token);
 
         AppUser user = appUserRepository.findById(userId)
-                .orElse(null);
+                .orElseThrow(() -> new UnauthorizedException("User not found"));
 
         Authentication authentication =
 
