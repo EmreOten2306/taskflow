@@ -18,8 +18,10 @@ import java.util.List;
 
 public class JwtAuthFilter extends OncePerRequestFilter {
 
+
     private final JwtService jwtService;
     private final AppUserRepository appUserRepository;
+
 
     public JwtAuthFilter(JwtService jwtService,
                          AppUserRepository appUserRepository) {

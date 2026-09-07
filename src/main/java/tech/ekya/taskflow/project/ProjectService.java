@@ -201,6 +201,8 @@ public class ProjectService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Project not found with id: " + id
                 ));
+
+
         if (taskRepository.existsByProjectId(id)) {
             throw new DuplicateResourceException(
                     "Project cannot be deleted because it has tasks"
