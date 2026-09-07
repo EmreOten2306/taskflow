@@ -51,6 +51,22 @@ public class GlobalExceptionHandler {
                 )
         );
     }
+    @ExceptionHandler(tech.ekya.taskflow.exception.AccessDeniedException.class)
+    public ResponseEntity<ApiError> handleCustomAccessDeniedException(
+            tech.ekya.taskflow.exception.AccessDeniedException ex,
+            HttpServletRequest request) {
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                new ApiError(
+                        Instant.now(),
+                        403,
+                        "Forbidden",
+                        ex.getMessage(),
+                        request.getRequestURI(),
+                        List.of()
+                )
+        );
+    }
 
     @ExceptionHandler(UnprocessableEntityException.class)
     public ResponseEntity<ApiError> handleUnprocessableEntityException(UnprocessableEntityException ex,
