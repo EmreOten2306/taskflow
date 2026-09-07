@@ -17,7 +17,7 @@ public class ReportService {
         return reportJdbcRepository.getProjectHealth();
     }
 
-    public List<MostUsedLabelResponse>  getMostUsedLabels() {
+    public List<MostUsedLabelResponse> getMostUsedLabels() {
         return reportJdbcRepository.getMostUsedLabels();
     }
 

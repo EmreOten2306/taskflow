@@ -47,7 +47,7 @@ public class JwtService {
             return false;
         }
     }
-    /// JWT içinden kullanıcı ID'sini çıkarır.
+    /// JWT içinden kullanıcı ID'sini çıkarır.  KİME AİT?
     public Long extractUserId(String token) {
 
         try {
