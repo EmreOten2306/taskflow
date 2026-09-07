@@ -11,6 +11,7 @@ import tech.ekya.taskflow.user.AppUser;
 import tech.ekya.taskflow.user.AppUserRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.io.IOException;
 import java.util.List;
@@ -56,7 +57,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 new UsernamePasswordAuthenticationToken(
                         user,
                         null,
-                        List.of()
+                        List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
                 );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

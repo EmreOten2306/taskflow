@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import tech.ekya.taskflow.project.dto.CreateProjectRequest;
 import tech.ekya.taskflow.project.dto.ProjectResponse;
 import tech.ekya.taskflow.project.dto.UpdateProjectRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -79,12 +80,10 @@ public class ProjectController {
     }
 
     /// DELETE
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProject(
-            @PathVariable Long id
-    ) {
-
+    public void deleteProject(@PathVariable Long id) {
         projectService.deleteProject(id);
     }
 }
