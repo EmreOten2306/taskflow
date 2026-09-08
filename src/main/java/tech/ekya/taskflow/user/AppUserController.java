@@ -1,5 +1,4 @@
 package tech.ekya.taskflow.user;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,7 +8,6 @@ import tech.ekya.taskflow.task.dto.TaskResponse;
 import tech.ekya.taskflow.user.dto.AppUserResponse;
 import tech.ekya.taskflow.user.dto.CreateAppUserRequest;
 import tech.ekya.taskflow.user.dto.UpdateAppUserRequest;
-
 import java.util.List;
 
 @RestController

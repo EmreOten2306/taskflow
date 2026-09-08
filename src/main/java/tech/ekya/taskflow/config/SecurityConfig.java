@@ -13,7 +13,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import tech.ekya.taskflow.security.JwtAuthFilter;
 import tech.ekya.taskflow.security.JwtService;
 import tech.ekya.taskflow.user.AppUserRepository;
-import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
 @EnableMethodSecurity
