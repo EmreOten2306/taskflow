@@ -258,8 +258,6 @@ public class ReportJdbcRepository {
 
 
 
-
-
     public ProjectStatusBreakdownResponse getProjectStatusBreakdown(Long projectId) {
 
         String sql = """
